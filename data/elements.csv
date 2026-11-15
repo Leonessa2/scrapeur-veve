@@ -2812,7 +2812,7 @@ aafd6cbb-b019-4312-9f50-a096b8be9943,8bd6f355-cdd9-4204-8cec-8add192c65e7,AMC Ty
 30a9f14d-f5ef-4047-bf97-c2b047190f83,441fdb5e-23e0-4fd3-9068-fd70fbb0a319,1:6 DeLorean Time Machine - Interactive,collectible,COMMON,FE,50000,41,32,,Back to the Future,Universal,1.99,2025-10-26,185,2022-01-18
 8f1cbd40-53b4-4b5b-b44b-5423bcff6bfe,3227ec9f-e36e-45f3-b126-d567808d2176,Happy New Year! 2026 - Tier 1,collectible,COMMON,,70000,26,0,,VeVe D&D,VeVe,,2026-12-31,,2026-12-31
 06215653-c578-44d4-a81b-3afff9192652,f2853426-d96c-44eb-b81e-bd84887d7f40,Tiny Jones,collectible,SECRET_RARE,FE,92072,,72,,The Feeshes,+Breadcat,1,2026-04-19,3.95,2026-06-15
-d113b6ab-9645-4942-b74c-d984d016b2b0,c9b2d5a3-f19c-4fe2-bfe6-de218281dab1,Tiny Jones Box,collectible,SECRET_RARE,FE,92072,,149,,+Breadcat Box Co.,+Breadcat,1,2026-04-17,1.5,2026-04-17
+d113b6ab-9645-4942-b74c-d984d016b2b0,c9b2d5a3-f19c-4fe2-bfe6-de218281dab1,Tiny Jones Box,collectible,COMMON,FE,92072,,149,,+Breadcat Box Co.,+Breadcat,1,2026-04-17,1.5,2026-04-17
 121f40d7-e3e6-41bc-971e-468d09af812c,2faff5b6-3b17-4629-8645-5301f735ad07,A House Without Windows (2021),comic,COMMON,,1000,,0,,A House Without Windows,Humanoids,2013,2026-01-14,2013,2026-01-14
 27b50505-36ea-4659-9a08-2c8beeed319f,1ef24009-90b9-40dd-b3ae-d079ed62d97f,Aladdin #1 (2026),comic,COMMON,1,0,,0,,Aladdin,Dynamite Entertainment,,2026-07-08,,2026-07-08
 27cb2785-e236-4a14-96c4-88c0db3aaff4,491da442-d71c-4e67-a229-63f24312b6c1,Aladdin #2 (2026),comic,COMMON,2,0,,0,,Aladdin,Dynamite Entertainment,,2026-08-19,,2026-08-19
@@ -8010,7 +8010,7 @@ a67d9dd1-b17d-4a8d-b0ed-d30dc128be62,26026e6c-9fd9-41dc-a5b8-b3ed55f42066,Iron M
 490ac211-37aa-4266-90ff-a0eeaf7b3137,26026e6c-9fd9-41dc-a5b8-b3ed55f42066,Iron Man Vol. 7 #3 (2026),comic,SECRET_RARE,3,1000,11,0,,Iron Man Vol. 7,Marvel,7.98,2026-04-27,195,2026-03-25
 782dae9e-efa6-4042-aaae-8be6bf426557,59996d9e-0884-4ced-9316-9a8a7944fcc0,Iron Man Vol. 7 #4 (2026),comic,COMMON,4,1000,11,0,,Iron Man Vol. 7,Marvel,1,2026-06-03,7.98,2026-04-08
 c54f4f1f-e468-4d7e-a3de-b63471facfdf,59996d9e-0884-4ced-9316-9a8a7944fcc0,Iron Man Vol. 7 #4 (2026),comic,UNCOMMON,4,1000,11,0,,Iron Man Vol. 7,Marvel,1.69,2026-04-29,30,2026-04-08
-6d772d3d-1652-4b8f-8d88-064dd92a74bf,59996d9e-0884-4ced-9316-9a8a7944fcc0,Iron Man Vol. 7 #4 (2026),comic,RARE,4,1000,11,0,,Iron Man Vol. 7,Marvel,2.88,2026-05-19,8,2026-06-01
+6d772d3d-1652-4b8f-8d88-064dd92a74bf,59996d9e-0884-4ced-9316-9a8a7944fcc0,Iron Man Vol. 6 #4 (2026),comic,RARE,4,1000,11,0,,Iron Man Vol. 6,Marvel,2.88,2026-05-19,8,2026-06-01
 8302d1ee-45db-43e0-bc83-e09b77409ba6,59996d9e-0884-4ced-9316-9a8a7944fcc0,Iron Man Vol. 7 #4 (2026),comic,ULTRA_RARE,4,1000,11,0,,Iron Man Vol. 7,Marvel,5.67,2026-06-07,35,2026-04-11
 4f046b13-3577-46dd-927f-a18cd1326373,59996d9e-0884-4ced-9316-9a8a7944fcc0,Iron Man Vol. 7 #4 (2026),comic,SECRET_RARE,4,1000,11,0,,Iron Man Vol. 7,Marvel,7.98,2026-05-20,7.98,2026-04-08
 4fe3eb64-0f59-4a89-a58a-051b21586878,388ce0d1-3aa7-4952-8d2a-79ca07d9a1c8,Iron Man Vol. 7 #5 (2026),comic,COMMON,5,1000,11,0,,Iron Man Vol. 7,Marvel,7.98,2026-05-13,7.98,2026-05-13
@@ -10429,7 +10429,7 @@ ca12f9ca-a17b-4fd6-bab6-488d8df0ece3,8540c6fb-b353-4e81-809e-c9ff8057b112,Punish
 68a66bec-c07c-4e41-8432-482a07280f8d,8540c6fb-b353-4e81-809e-c9ff8057b112,Punisher Vol. 15 #8 (2026),comic,SECRET_RARE,8,1000,11,0,,Punisher Vol. 15,Marvel,7.98,2026-09-09,7.98,2026-09-09
 7f54d52a-b341-4395-8d17-5d25be7ec70d,99cc033f-bd12-4c81-8a65-a30e9f9ea069,Punisher Vol. 3 #1 (2026),comic,COMMON,1,1000,11,0,,Punisher Vol. 3,Marvel,2.5,2026-04-21,11.99,2026-09-19
 ce1cf00f-1010-46a6-8af5-49e87212166a,99cc033f-bd12-4c81-8a65-a30e9f9ea069,Punisher Vol. 15 #1 (2026),comic,UNCOMMON,1,1000,11,0,,Punisher Vol. 15,Marvel,2.95,2026-05-29,22,2026-04-13
-85d99fbb-505e-4313-abfc-952ed0b9a756,99cc033f-bd12-4c81-8a65-a30e9f9ea069,Punisher Vol. 3 #1 (2026),comic,RARE,1,1000,11,0,,Punisher Vol. 3,Marvel,3,2026-02-26,500,2026-04-09
+85d99fbb-505e-4313-abfc-952ed0b9a756,99cc033f-bd12-4c81-8a65-a30e9f9ea069,Punisher Vol. 15 #1 (2026),comic,RARE,1,1000,11,0,,Punisher Vol. 15,Marvel,3,2026-02-26,500,2026-04-09
 708d3c42-31de-4962-b8d4-00b0ae5e7c7b,99cc033f-bd12-4c81-8a65-a30e9f9ea069,Punisher Vol. 3 #1 (2026),comic,ULTRA_RARE,1,1000,11,0,,Punisher Vol. 3,Marvel,8.98,2026-07-09,99,2026-02-25
 59696211-242d-46e5-8c3a-405d2be44064,99cc033f-bd12-4c81-8a65-a30e9f9ea069,Punisher Vol. 3 #1 (2026),comic,SECRET_RARE,1,1000,11,0,,Punisher Vol. 3,Marvel,8.98,2026-02-26,299,2026-03-01
 9480e227-0447-4f86-ac3d-03f27bf670bb,a2cc5435-2e0c-4114-a98f-3bf64a08f536,Punisher Vs. Spider-Man #1 (2026),comic,COMMON,1,1000,11,0,,Punisher Vs. Spider-Man,Marvel,7.98,2026-07-15,7.98,2026-07-15
