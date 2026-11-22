@@ -268,7 +268,7 @@ bc086182-c266-4d5f-885c-fd899f79b3a4,33fd5ce1-51a3-4505-b431-4cfc9315438a,Sket O
 c99e3fba-dfdd-4753-82f2-408f461e606c,ebc46ecf-3c4c-4919-9f4c-137367a5e2c1,BAM! - Gold,collectible,COMMON,,70,6,3,,Fun Fridays,VeVe,27.5,2026-08-20,120,2026-07-17
 c426317d-b464-46a4-b334-e73595f2afbd,4108763b-0385-490b-99b0-5dcf9d6fb23c,Connor - The Silent Sentinel Special Edition,collectible,COMMON,FA,70,6,1,,Assassin's Creed,Ubisoft,30,2026-04-22,888888,2026-04-11
 9d4e2fb1-1088-45dd-95d8-fdbbdd731b92,aea0de54-7c1a-44ca-9ca8-798bc4ac1716,Ezio Auditore da Firenze Special Edition,collectible,COMMON,FA,70,6,0,,Assassin's Creed,Ubisoft,30,2026-06-03,31500,2025-12-25
-71e624e1-3660-49d6-a6a8-707dd61803da,ebc46ecf-3c4c-4919-9f4c-137367a5e2c1,POW! - Gold,collectible,COMMON,,70,6,6,,Fun Fridays,VeVe,26,2026-07-27,199,2026-07-17
+71e624e1-3660-49d6-a6a8-707dd61803da,ebc46ecf-3c4c-4919-9f4c-137367a5e2c1,POW! - Gold,collectible,COMMON,FE,70,6,6,,Fun Fridays,VeVe,26,2026-07-27,199,2026-07-17
 375e383d-9421-43dc-a1de-19703274118f,c88e3ed4-bfca-4216-8c62-d0f47ff6d756,Snow - Dark,collectible,COMMON,FE,70,6,6,,Fun Fridays,VeVe,22,2026-08-18,49,2026-08-14
 42b9dcb8-5cbc-4c17-a1af-eeeaf5957728,d393394e-332a-4146-81f7-baac7b3e85aa,Colossus - Uncanny X-Men 1975,collectible,COMMON,FA,75,6,3,,Phoenix Five,Marvel,30,2026-08-19,65000,2026-08-24
 bc07222d-2455-4b10-9c15-f1b8b365befb,1fc2954e-9167-4800-ab11-daf2113963a9,Target Practice Rabbid,collectible,SECRET_RARE,,75,6,0,,Rabbids,Ubisoft,20,2026-02-10,149,2025-11-22
@@ -630,7 +630,7 @@ c8a76df1-5979-4917-8189-5ecb4a2e4225,ebc46ecf-3c4c-4919-9f4c-137367a5e2c1,KABOOM
 22051b59-d148-440f-8d9e-550d1da58555,616f08c3-b10b-44ce-9b0d-9b3df2745637,Marvel Iron Man 18” – Superior,collectible,ULTRA_RARE,,350,1,11,,Funko GOLD,Funko,38.95,2025-05-26,6000,2025-11-12
 f413be9f-1152-4047-b346-798b279e9170,0a1a5a47-76d5-4f88-85ab-6222ef2c18f3,My Toy - Honey Bunny,collectible,ULTRA_RARE,FE,350,21,6,,Tobey,Tobey Studio,8.99,2025-04-12,300,2026-01-20
 28ed3953-b326-4d02-aa27-d472e939f213,622e2e19-f52f-4e4c-b23c-47e65037e6e4,One Above All,collectible,SECRET_RARE,FA,350,11,4,,Marvel Mightys,Marvel,89,2026-08-03,550,2026-06-10
-48c3da1f-c783-45f5-af97-8dbdcdeb74ec,ebc46ecf-3c4c-4919-9f4c-137367a5e2c1,Thought Bubble,collectible,SECRET_RARE,,350,11,7,,Fun Fridays,VeVe,9.87,2026-07-17,49,2026-07-28
+48c3da1f-c783-45f5-af97-8dbdcdeb74ec,ebc46ecf-3c4c-4919-9f4c-137367a5e2c1,Thought Bubble,collectible,SECRET_RARE,FE,350,11,7,,Fun Fridays,VeVe,9.87,2026-07-17,49,2026-07-28
 30b76918-6d75-4985-bd81-70cbf79f9d2a,881c4efd-79d2-4e41-95e2-498eea257e2f,VeVe Christmas Tree - Diamond,collectible,ULTRA_RARE,FE,350,,3,,VeVe Christmas 2024,VeVe,7,2025-09-27,550,2025-12-25
 c7789211-3299-47cf-8cfc-02aebf30703b,3a7032ec-e458-4e45-b66d-12a1df837f7e,Smee,collectible,ULTRA_RARE,FA,353,21,2,,Disney Peter Pan Collection,Disney,11,2025-11-14,99,2025-10-12
 2df46187-6ece-4d9e-bc39-2a492acd6d2a,b8af5309-22d7-4b89-a200-7cbdaae1eee0,Be Careful Dory!,collectible,SECRET_RARE,FE,355,41,3,,Disney Pixar Finding Nemo Collection,Disney,21,2025-11-09,900,2026-04-05
@@ -2521,7 +2521,7 @@ a8e88f46-106f-4792-a9be-b511c776084a,5efcaf48-b3f5-44ff-8ff2-dd245f63527a,Atlas 
 b991e11e-c587-472e-9c57-092cc7625af8,856b8ddf-ac6a-47ac-a081-8cb95b9dcbda,DeLorean Time Machine - Hovering Version,collectible,ULTRA_RARE,,5888,41,8,,Back to the Future Part II,Universal,9.6,2025-02-05,84,2022-11-20
 8197f403-df07-45d8-9435-e4b30465250c,d410e54b-27fc-4f10-aaa0-ac36525c730d,Fantasma,collectible,RARE,FA,5888,41,13,,Mermicornos,tokidoki,1,2025-11-10,88,2022-01-18
 c8381bdd-5f77-40fc-81cf-4f27e4001d29,d410e54b-27fc-4f10-aaa0-ac36525c730d,Lilypad,collectible,RARE,FA,5888,41,17,,Mermicornos,tokidoki,1.2,2025-08-24,81,2022-01-19
-0b9cbb5a-7c04-4b6c-ab53-e401c6096618,608f625e-22cb-4de2-9000-d5296079b5d9,Lunar New Year: Snake,collectible,COMMON,FE,5888,21,6,,USPS Stamp Art,United States Postal Service,1,2025-01-30,2025202,2026-05-01
+0b9cbb5a-7c04-4b6c-ab53-e401c6096618,608f625e-22cb-4de2-9000-d5296079b5d9,Lunar New Year: Snake,collectible,COMMON,FE,5888,21,6,,Lunar New Year,United States Postal Service,1,2025-01-30,2025202,2026-05-01
 a79849a8-a5cb-4a7f-b0bf-5dbe2249742c,9391023a-b455-4c20-9212-02f3e994898a,Romulan D'deridex Warbird,collectible,ULTRA_RARE,FE,5888,41,3,,Star Trek: The Next Generation,Star Trek,18,2025-11-16,175,2024-05-14
 55876156-f6d4-4ca8-bb50-fd6c1f5f0fb8,44b1cb23-eedd-46c5-938d-20334802f518,U.S.S. Enterprise-D (1:1),collectible,ULTRA_RARE,FE,5888,41,11,,Star Trek: The Next Generation,Star Trek,6.99,2025-11-17,999.99,2022-01-21
 786a69fd-65d2-4305-b415-43f50e04f861,3fb2fa29-f321-42b4-8809-e9a094cefec9,Ye Xiao Chai,collectible,RARE,FA,5888,41,10,,Pili Fantasy,Pili International Multimedia,2,2026-06-22,163,2022-02-07
@@ -4062,10 +4062,10 @@ eb8306b8-947f-4049-8f91-7c5fb705935f,cb2a88f9-0819-4558-bb07-f04038750f5b,Avenge
 cc1b3722-3733-41fc-90d4-f0abb33e4a67,f88396a7-fddf-47ca-98de-8f2f60ce603c,Avengers Vol. 6 #31 (2023),comic,UNCOMMON,31,1000,11,0,,Avengers Vol. 6,Marvel,1.8,2025-10-09,9.9,2025-12-14
 d24e3ab4-6d58-4d89-8c49-52d42eebcce6,f88396a7-fddf-47ca-98de-8f2f60ce603c,Avengers Vol. 6 #31 (2023),comic,RARE,31,1000,11,0,,Avengers Vol. 6,Marvel,5,2025-10-08,60,2026-02-22
 798f6cc9-059b-4ad6-87bf-5068714958eb,f88396a7-fddf-47ca-98de-8f2f60ce603c,Avengers Vol. 6 #31 (2023),comic,ULTRA_RARE,31,1000,11,0,,Avengers Vol. 6,Marvel,6.98,2026-07-18,33.18,2026-07-18
-04123968-90c6-4e4f-a6d0-21a7c9b88db2,f88396a7-fddf-47ca-98de-8f2f60ce603c,Avengers Vol. 6 #31 (2023),comic,SECRET_RARE,31,1000,11,0,,Avengers Vol. 6,Marvel,6.98,2025-10-08,6.98,2025-10-08
+04123968-90c6-4e4f-a6d0-21a7c9b88db2,f88396a7-fddf-47ca-98de-8f2f60ce603c,The Avengers Vol. 6 #31 (2023),comic,SECRET_RARE,31,1000,11,0,,The Avengers Vol. 6,Marvel,6.98,2025-10-08,6.98,2025-10-08
 6ec5a84b-73d4-4a45-805c-01f502dc1ede,8c3e64ce-d4d1-4c88-b5a5-0c8a95605d0f,The Avengers Vol. 6 #32 (2023),comic,COMMON,32,1000,11,0,,The Avengers Vol. 6,Marvel,1,2025-11-07,6.98,2025-11-05
 f270e33e-a90c-45b6-add5-a35c7b02140c,8c3e64ce-d4d1-4c88-b5a5-0c8a95605d0f,The Avengers Vol. 6 #32 (2023),comic,UNCOMMON,32,1000,11,0,,The Avengers Vol. 6,Marvel,1.25,2025-11-07,12,2025-12-08
-b92c7fde-3f40-4c86-9a9b-e6c013137751,8c3e64ce-d4d1-4c88-b5a5-0c8a95605d0f,Avengers Vol. 6 #32 (2023),comic,RARE,32,1000,11,0,,Avengers Vol. 6,Marvel,2,2025-11-18,13,2026-07-29
+b92c7fde-3f40-4c86-9a9b-e6c013137751,8c3e64ce-d4d1-4c88-b5a5-0c8a95605d0f,The Avengers Vol. 6 #32 (2023),comic,RARE,32,1000,11,0,,The Avengers Vol. 6,Marvel,2,2025-11-18,13,2026-07-29
 643f7d70-333c-46f8-b7f0-bfe49693c0b6,8c3e64ce-d4d1-4c88-b5a5-0c8a95605d0f,Avengers Vol. 6 #32 (2023),comic,ULTRA_RARE,32,1000,11,0,,Avengers Vol. 6,Marvel,5.98,2026-08-09,75,2026-02-02
 55411dda-826b-4377-8cfc-46febab6f057,8c3e64ce-d4d1-4c88-b5a5-0c8a95605d0f,Avengers Vol. 6 #32 (2023),comic,SECRET_RARE,32,1000,11,0,,Avengers Vol. 6,Marvel,6.98,2026-04-25,6980000,2026-01-11
 849f0173-8f03-4885-be12-2216ef0dad54,2b4319b2-a3d1-4f4b-9cd4-a75d9897f144,Avengers Vol. 6 #33 (2023),comic,COMMON,33,1000,11,0,,Avengers Vol. 6,Marvel,2.5,2026-05-09,6.98,2025-12-17
@@ -4093,9 +4093,9 @@ f2816dc3-a3c0-4602-9cf3-aeb62752e374,b1c1a55d-aa54-499d-887c-9ed84eaa9975,Avenge
 33f2520a-1ab3-4c83-8306-d73bd4d9b9ca,b1c1a55d-aa54-499d-887c-9ed84eaa9975,Avengers vs. X-Men #10 (2012),comic,RARE,10,1000,100,0,CC,Avengers vs. X-Men,Marvel,3.3,2026-05-09,15,2026-05-05
 e912c252-5788-482f-a22b-c6e39e34cf99,b1c1a55d-aa54-499d-887c-9ed84eaa9975,Avengers vs. X-Men #10 (2012),comic,ULTRA_RARE,10,1000,100,0,CC,Avengers vs. X-Men,Marvel,6.99,2026-04-08,50,2026-06-13
 c5145581-02c9-4e96-97db-afb8957de953,b1c1a55d-aa54-499d-887c-9ed84eaa9975,Avengers vs. X-Men #10 (2012),comic,SECRET_RARE,10,1000,100,0,CC,Avengers vs. X-Men,Marvel,6.99,2026-04-26,520,2026-05-08
-9a41fb0a-bef0-45ae-9371-0f1d49ad0843,0356f220-4890-4e8c-a6f2-1f08840ef590,Avengers vs. X-Men #6 (2012),comic,COMMON,6,1000,100,0,CC,Avengers vs. X-Men,Marvel,1.25,2026-07-02,7.65,2026-08-29
-5f883290-b620-45b0-a4c7-78320ee6e30b,0356f220-4890-4e8c-a6f2-1f08840ef590,Avengers vs. X-Men #6 (2012),comic,UNCOMMON,6,1000,100,0,CC,Avengers vs. X-Men,Marvel,1.9,2026-06-15,2000,2026-07-29
-b80f2eb1-16a6-40cd-a90b-784fb4719481,0356f220-4890-4e8c-a6f2-1f08840ef590,Avengers vs. X-Men #6 (2012),comic,RARE,6,1000,100,0,CC,Avengers vs. X-Men,Marvel,3.99,2026-06-13,6.99,2026-06-12
+9a41fb0a-bef0-45ae-9371-0f1d49ad0843,0356f220-4890-4e8c-a6f2-1f08840ef590,Avengers Vs X-Men Vol. 1 #6 (2012),comic,COMMON,6,1000,100,0,CC,Avengers Vs X-Men Vol. 1,Marvel,1.25,2026-07-02,7.65,2026-08-29
+5f883290-b620-45b0-a4c7-78320ee6e30b,0356f220-4890-4e8c-a6f2-1f08840ef590,Avengers Vs X-Men Vol. 1 #6 (2012),comic,UNCOMMON,6,1000,100,0,CC,Avengers Vs X-Men Vol. 1,Marvel,1.9,2026-06-15,2000,2026-07-29
+b80f2eb1-16a6-40cd-a90b-784fb4719481,0356f220-4890-4e8c-a6f2-1f08840ef590,Avengers Vs X-Men Vol. 1 #6 (2012),comic,RARE,6,1000,100,0,CC,Avengers Vs X-Men Vol. 1,Marvel,3.99,2026-06-13,6.99,2026-06-12
 7285a4b7-481d-44d2-bbda-3f6a98aa850b,0356f220-4890-4e8c-a6f2-1f08840ef590,Avengers vs. X-Men #6 (2012),comic,ULTRA_RARE,6,1000,100,0,CC,Avengers vs. X-Men,Marvel,6.99,2026-08-13,50,2026-08-25
 a99b228a-01b5-4bc5-b084-a31f294f48eb,0356f220-4890-4e8c-a6f2-1f08840ef590,Avengers vs. X-Men #6 (2012),comic,SECRET_RARE,6,1000,100,0,CC,Avengers vs. X-Men,Marvel,6.99,2026-07-23,88,2026-06-13
 a989ed68-b511-46e8-9862-a12c36086ad6,3271c7bf-6e9f-49cb-9627-63d1370f52e1,Avengers: Armageddon #1 (2026),comic,COMMON,1,1000,11,0,,Avengers: Armageddon,Marvel,1.99,2026-09-20,10,2026-08-21
@@ -5451,8 +5451,8 @@ fd10bd73-f260-441c-b0a4-c8b7707849f9,cbbd4135-561b-4485-9088-9de11f32cb51,Darede
 4979d706-0fef-4a7b-b32a-5f6a36a3e338,ff37dca1-08c3-4e15-9cf1-336175e75a4c,Daredevil & Echo #4 (2023),comic,COMMON,4,1000,11,0,,Daredevil & Echo,Marvel,2,2024-12-13,999,2024-06-12
 f01f5017-f612-40e5-97e3-b47002cdcd58,ff37dca1-08c3-4e15-9cf1-336175e75a4c,Daredevil & Echo #4 (2023),comic,SECRET_RARE,4,1000,11,0,,Daredevil & Echo,Marvel,6.98,2024-03-13,6.98,2024-03-13
 9d3b7836-321d-40d0-a88e-6454bbd45e13,8aeeb75b-fabc-4b15-9580-8b931a3b5d02,Daredevil Vol. 1 #168 (1964),comic,COMMON,168,1000,100,0,,Daredevil Vol. 1,Marvel,6.99,2026-09-26,39,2026-07-03
-8fae13f1-21fc-4270-a932-c70f948fe29f,8aeeb75b-fabc-4b15-9580-8b931a3b5d02,Daredevil Vol. 1 #168 (1964),comic,UNCOMMON,168,1000,100,0,,Daredevil Vol. 1,Marvel,3.9,2026-05-31,800,2026-07-03
-cf63aaba-916e-4012-908a-7db482065657,8aeeb75b-fabc-4b15-9580-8b931a3b5d02,Daredevil Vol. 1 #168 (1964),comic,RARE,168,1000,100,0,,Daredevil Vol. 1,Marvel,4.99,2026-07-19,50,2026-07-03
+8fae13f1-21fc-4270-a932-c70f948fe29f,8aeeb75b-fabc-4b15-9580-8b931a3b5d02,Daredevil Vol. 1 #168 (1980),comic,UNCOMMON,168,1000,100,0,,Daredevil Vol. 1,Marvel,3.9,2026-05-31,800,2026-07-03
+cf63aaba-916e-4012-908a-7db482065657,8aeeb75b-fabc-4b15-9580-8b931a3b5d02,Daredevil Vol. 1 #168 (1980),comic,RARE,168,1000,100,0,,Daredevil Vol. 1,Marvel,4.99,2026-07-19,50,2026-07-03
 45b3d6ac-6828-4e7a-bfd3-0bb1480043f1,8aeeb75b-fabc-4b15-9580-8b931a3b5d02,Daredevil Vol. 1 #168 (1964),comic,ULTRA_RARE,168,1000,100,0,,Daredevil Vol. 1,Marvel,11,2026-07-21,39,2026-05-19
 2f3efedc-d7e6-4422-ae8b-9bfc72b267a3,8aeeb75b-fabc-4b15-9580-8b931a3b5d02,Daredevil Vol. 1 #168 (1964),comic,SECRET_RARE,168,1000,100,0,,Daredevil Vol. 1,Marvel,6.99,2026-07-01,569,2026-05-19
 bd00a602-fcaf-455b-bbe8-13dfadc598fe,da72c0f4-8a0e-4e6a-9ae5-9601fcbb211d,Daredevil Vol. 1 #176 (1964),comic,COMMON,176,1000,100,0,,Daredevil Vol. 1,Marvel,1.5,2026-08-22,6.99,2026-08-18
@@ -7518,7 +7518,7 @@ d1fc2a93-da2c-4f81-8b34-8a3c2eecc0ba,55dcab15-282e-4269-af35-397b965c435b,The Im
 541fcdf1-7923-415f-b0e1-898188e95632,33a1f92e-c9e9-47bc-9900-79db6386fa6a,The Immortal Thor Vol. 1 - Annual #11 (2023),comic,COMMON,11,1000,11,0,,The Immortal Thor Vol. 1 - Annual,Marvel,1.99,2024-05-23,11,2024-08-14
 d996f157-66d9-47f4-a377-a6c71f10e699,33a1f92e-c9e9-47bc-9900-79db6386fa6a,The Immortal Thor Vol. 1 - Annual #11 (2023),comic,SECRET_RARE,11,1000,11,0,,The Immortal Thor Vol. 1 - Annual,Marvel,7.98,2024-05-22,7.98,2024-05-22
 20eb25c2-3621-4408-81b4-af2746a4c31b,0bfcebf8-89be-4602-ac7e-2789b341c1f6,The Immortal Thor Vol. 1 #12 (2023),comic,COMMON,12,1000,11,0,,The Immortal Thor Vol. 1,Marvel,1.1,2026-06-20,69,2026-06-10
-d0278cb0-2712-4ade-9693-329441650d45,0bfcebf8-89be-4602-ac7e-2789b341c1f6,The Immortal Thor Vol. 1 - Annual #12 (2023),comic,UNCOMMON,12,1000,11,0,,The Immortal Thor Vol. 1 - Annual,Marvel,2.15,2026-06-20,66,2026-06-09
+d0278cb0-2712-4ade-9693-329441650d45,0bfcebf8-89be-4602-ac7e-2789b341c1f6,The Immortal Thor Vol. 1 #12 (2023),comic,UNCOMMON,12,1000,11,0,,The Immortal Thor Vol. 1,Marvel,2.15,2026-06-20,66,2026-06-09
 9cb7d423-9df8-4c6d-b9ca-57155641cab4,0bfcebf8-89be-4602-ac7e-2789b341c1f6,The Immortal Thor Vol. 1 - Annual #12 (2023),comic,ULTRA_RARE,12,1000,11,0,,The Immortal Thor Vol. 1 - Annual,Marvel,7.98,2026-06-04,99,2026-06-16
 ebd4456e-b2f5-4c11-b235-82ae447f855f,0bfcebf8-89be-4602-ac7e-2789b341c1f6,The Immortal Thor Vol. 1 - Annual #12 (2023),comic,SECRET_RARE,12,1000,11,0,,The Immortal Thor Vol. 1 - Annual,Marvel,7.98,2026-06-08,2500,2024-12-13
 7d04ac9d-b67a-4346-924e-def72661c6e0,62054de6-4405-482c-a4a6-f4a501cb906d,The Immortal Thor Vol. 1 - Annual #13 (2023),comic,COMMON,13,1000,11,0,,The Immortal Thor Vol. 1 - Annual,Marvel,2.99,2024-08-02,10,2024-12-13
@@ -8761,7 +8761,7 @@ e7af9de0-80f7-4e7d-a222-7561f26d573d,f0ff779a-ff9e-4838-9824-36b385ece5a1,Magik 
 ce583fb5-94e5-4228-b9c8-ad06035be512,26652049-d058-4c6e-94d4-8e5cab337b2d,Magik #7 (2025),comic,COMMON,7,1000,11,0,,Magik,Marvel,2.5,2025-11-03,15,2025-07-09
 0c82b71e-b678-4902-9e3b-cdc8fbf84ef9,26652049-d058-4c6e-94d4-8e5cab337b2d,Magik #7 (2025),comic,RARE,7,1000,11,1,,Magik,Marvel,39,2025-07-10,39,2025-07-10
 77d3ff0f-55b6-4c35-b9b9-6678e9e18a7e,26652049-d058-4c6e-94d4-8e5cab337b2d,Magik #7 (2025),comic,SECRET_RARE,7,1000,11,0,,Magik,Marvel,6.98,2025-07-09,6.98,2025-07-09
-65cf38ee-f9d8-45be-b4ef-7edb7094c991,674e96d2-c182-4ae3-9930-6559ef2fb9b4,Magik #8 (2025),comic,COMMON,8,1000,11,0,,Magik,Marvel,1.45,2025-08-20,50,2026-03-08
+65cf38ee-f9d8-45be-b4ef-7edb7094c991,674e96d2-c182-4ae3-9930-6559ef2fb9b4,Magik Vol. 1 #8 (2025),comic,COMMON,8,1000,11,0,,Magik Vol. 1,Marvel,1.45,2025-08-20,50,2026-03-08
 453d4740-f915-43b3-a6db-22e92f290a9f,674e96d2-c182-4ae3-9930-6559ef2fb9b4,Magik Vol. 1 #8 (2025),comic,UNCOMMON,8,1000,11,0,,Magik Vol. 1,Marvel,2.5,2025-08-24,7,2025-08-14
 c6339e6f-3a61-4769-99f4-ca0a3c531172,674e96d2-c182-4ae3-9930-6559ef2fb9b4,Magik Vol. 1 #8 (2025),comic,RARE,8,1000,11,0,,Magik Vol. 1,Marvel,5.5,2025-09-24,24,2025-10-28
 c42ee6e3-3e4d-4c18-8678-026c50db51d0,674e96d2-c182-4ae3-9930-6559ef2fb9b4,Magik #8 (2025),comic,ULTRA_RARE,8,1000,11,0,,Magik,Marvel,6.98,2025-09-02,100,2025-08-17
@@ -10427,7 +10427,7 @@ ae67dae7-9413-40e5-b4a9-cbc8efb2d660,40395656-445a-443b-8c5e-aad7960633de,Punish
 1585c1a1-43f7-4040-b1d3-495ae64a9dc9,8540c6fb-b353-4e81-809e-c9ff8057b112,Punisher Vol. 15 #8 (2026),comic,RARE,8,1000,11,0,,Punisher Vol. 15,Marvel,5,2026-09-11,7.98,2026-09-09
 ca12f9ca-a17b-4fd6-bab6-488d8df0ece3,8540c6fb-b353-4e81-809e-c9ff8057b112,Punisher Vol. 15 #8 (2026),comic,ULTRA_RARE,8,1000,11,0,,Punisher Vol. 15,Marvel,7.98,2026-09-09,7.98,2026-09-09
 68a66bec-c07c-4e41-8432-482a07280f8d,8540c6fb-b353-4e81-809e-c9ff8057b112,Punisher Vol. 15 #8 (2026),comic,SECRET_RARE,8,1000,11,0,,Punisher Vol. 15,Marvel,7.98,2026-09-09,7.98,2026-09-09
-7f54d52a-b341-4395-8d17-5d25be7ec70d,99cc033f-bd12-4c81-8a65-a30e9f9ea069,Punisher Vol. 3 #1 (2026),comic,COMMON,1,1000,11,0,,Punisher Vol. 3,Marvel,2.5,2026-04-21,11.99,2026-09-19
+7f54d52a-b341-4395-8d17-5d25be7ec70d,99cc033f-bd12-4c81-8a65-a30e9f9ea069,Punisher Vol. 15 #1 (2026),comic,COMMON,1,1000,11,0,,Punisher Vol. 15,Marvel,2.5,2026-04-21,11.99,2026-09-19
 ce1cf00f-1010-46a6-8af5-49e87212166a,99cc033f-bd12-4c81-8a65-a30e9f9ea069,Punisher Vol. 15 #1 (2026),comic,UNCOMMON,1,1000,11,0,,Punisher Vol. 15,Marvel,2.95,2026-05-29,22,2026-04-13
 85d99fbb-505e-4313-abfc-952ed0b9a756,99cc033f-bd12-4c81-8a65-a30e9f9ea069,Punisher Vol. 15 #1 (2026),comic,RARE,1,1000,11,0,,Punisher Vol. 15,Marvel,3,2026-02-26,500,2026-04-09
 708d3c42-31de-4962-b8d4-00b0ae5e7c7b,99cc033f-bd12-4c81-8a65-a30e9f9ea069,Punisher Vol. 15 #1 (2026),comic,ULTRA_RARE,1,1000,11,0,,Punisher Vol. 15,Marvel,8.98,2026-07-09,99,2026-02-25
@@ -12142,7 +12142,7 @@ f6f59209-48be-425e-8819-15749dab20fc,11c2ee25-51ef-4d8f-a0d6-9844dba4e273,Spider
 183d95fc-0db1-45e4-9264-48ad5ecfd7c1,12ae2e74-4ccd-4855-9384-7a885c6c373b,Spider-Man Noir Vol. 3 #1 (2025),comic,UNCOMMON,1,1000,11,0,,Spider-Man Noir Vol. 3,Marvel,2,2025-10-10,20000000,2026-01-30
 66b8409b-48b6-4986-921a-f476ec29fee4,12ae2e74-4ccd-4855-9384-7a885c6c373b,Spider-Man Noir Vol. 3 #1 (2025),comic,RARE,1,1000,11,0,,Spider-Man Noir Vol. 3,Marvel,3,2026-02-04,700,2026-02-13
 d7c5d716-bf35-4e5d-8b37-b927b754b433,12ae2e74-4ccd-4855-9384-7a885c6c373b,Spider-Man Noir #1 (2025),comic,ULTRA_RARE,1,1000,11,0,,Spider-Man Noir,Marvel,7.98,2026-05-28,2500,2025-10-13
-c7bd0cec-1ef5-40ff-bfea-fc9e06a5ed1f,12ae2e74-4ccd-4855-9384-7a885c6c373b,Spider-Man Noir #1 (2025),comic,SECRET_RARE,1,1000,11,0,,Spider-Man Noir,Marvel,7.98,2026-04-22,3500,2025-10-13
+c7bd0cec-1ef5-40ff-bfea-fc9e06a5ed1f,12ae2e74-4ccd-4855-9384-7a885c6c373b,Spider-Man Noir Vol. 3 #1 (2025),comic,SECRET_RARE,1,1000,11,0,,Spider-Man Noir Vol. 3,Marvel,7.98,2026-04-22,3500,2025-10-13
 d1bec660-2194-4a75-9781-6bf5acde923f,16b23cc3-45cf-45f4-89a0-f1e4678d5675,Spider-Man Noir Vol. 3 #2 (2025),comic,COMMON,2,1000,11,0,,Spider-Man Noir Vol. 3,Marvel,7.98,2025-11-12,7.98,2025-11-12
 e2feb81a-5513-46dc-b76a-274b3a68e945,16b23cc3-45cf-45f4-89a0-f1e4678d5675,Spider-Man Noir Vol. 3 #2 (2025),comic,UNCOMMON,2,1000,11,0,,Spider-Man Noir Vol. 3,Marvel,2,2026-05-27,15,2025-11-12
 bdd6ae62-87e9-43ea-b89b-79959f65d75a,16b23cc3-45cf-45f4-89a0-f1e4678d5675,Spider-Man Noir #2 (2025),comic,ULTRA_RARE,2,1000,11,0,,Spider-Man Noir,Marvel,7.98,2025-11-12,49,2025-11-13
@@ -13301,7 +13301,7 @@ d272a5cd-13c0-46b5-bcd5-dddaa813d0ba,6faf5c5c-8776-4ab3-877e-5dd7ad5f70df,The Am
 6e8eb235-ae08-450c-b79e-40209c8bf3ed,6faf5c5c-8776-4ab3-877e-5dd7ad5f70df,The Amazing Spider-Man #33 (2025),comic,ULTRA_RARE,33,1000,11,0,,The Amazing Spider-Man,Marvel,7.98,2026-08-27,65,2026-07-23
 2c37cec4-cead-453f-9b55-8b27bc6318db,6faf5c5c-8776-4ab3-877e-5dd7ad5f70df,The Amazing Spider-Man #33 (2025),comic,SECRET_RARE,33,1000,11,0,,The Amazing Spider-Man,Marvel,7.98,2026-07-22,7.98,2026-07-22
 82f7aed6-b76e-4cf6-9004-7dac51215cee,16a3b943-7366-490b-8db4-7ef9e2cbabd8,The Amazing Spider-Man #34 (2025),comic,COMMON,34,1000,11,0,,The Amazing Spider-Man,Marvel,3.69,2026-08-13,7.98,2026-08-05
-40508e10-a41c-4f7d-8687-7c34c68ddc10,16a3b943-7366-490b-8db4-7ef9e2cbabd8,The Amazing Spider-Man #34 (2025),comic,UNCOMMON,34,1000,11,0,,The Amazing Spider-Man,Marvel,6,2026-08-05,86,2026-08-05
+40508e10-a41c-4f7d-8687-7c34c68ddc10,16a3b943-7366-490b-8db4-7ef9e2cbabd8,The Amazing Spider-Man Vol. 8 #34 (2025),comic,UNCOMMON,34,1000,11,0,,The Amazing Spider-Man Vol. 8,Marvel,6,2026-08-05,86,2026-08-05
 295d9a83-9c7a-48ad-8196-bd28f901a9e5,16a3b943-7366-490b-8db4-7ef9e2cbabd8,The Amazing Spider-Man #34 (2025),comic,RARE,34,1000,11,0,,The Amazing Spider-Man,Marvel,4.5,2026-08-20,14.99,2026-08-06
 9c32ff61-0097-4ae1-9f7f-f8c6f375fd70,16a3b943-7366-490b-8db4-7ef9e2cbabd8,The Amazing Spider-Man #34 (2025),comic,ULTRA_RARE,34,1000,11,0,,The Amazing Spider-Man,Marvel,7,2026-08-22,17.5,2026-09-24
 3cce9c9f-e276-41d7-bb1a-c1efe283af21,16a3b943-7366-490b-8db4-7ef9e2cbabd8,The Amazing Spider-Man Vol. 8 #34 (2025),comic,SECRET_RARE,34,1000,11,0,,The Amazing Spider-Man Vol. 8,Marvel,7.98,2026-08-07,99,2026-08-05
@@ -15540,9 +15540,9 @@ c73688ba-f8cf-40bb-925b-97f81e3f08be,1279a661-1b7c-4d09-a34a-8cc62bb96de2,The X-
 954333c1-5bf8-455b-bd56-aa2069b425ee,2c434f5a-2fa8-4054-a0c3-975c6ec7d585,Uncanny X-Men Vol. 1 #125 (1963),comic,RARE,125,1000,100,0,B,Uncanny X-Men Vol. 1,Marvel,2.6,2026-04-05,20,2026-09-06
 9eeda836-fbc3-4478-8d5e-1d6060d06f12,2c434f5a-2fa8-4054-a0c3-975c6ec7d585,Uncanny X-Men Vol. 1 #125 (1963),comic,ULTRA_RARE,125,1000,100,0,B,Uncanny X-Men Vol. 1,Marvel,5,2026-04-17,12.99,2026-09-26
 fb58d78d-c1e4-4f1c-b6c9-c86b35bc49b8,2c434f5a-2fa8-4054-a0c3-975c6ec7d585,Uncanny X-Men Vol. 1 #125 (1963),comic,SECRET_RARE,125,1000,100,0,B,Uncanny X-Men Vol. 1,Marvel,6.99,2026-05-27,500000,2026-09-05
-056df928-91bd-4611-b144-2c2bf7e30936,ce33b280-66fc-403c-aa6e-9f7887752744,Uncanny X-Men Vol. 1 #131 (1963),comic,COMMON,131,1000,100,0,BBB,Uncanny X-Men Vol. 1,Marvel,2.5,2026-06-27,9.99,2026-08-01
+056df928-91bd-4611-b144-2c2bf7e30936,ce33b280-66fc-403c-aa6e-9f7887752744,The X-Men Vol. 1 #131 (1963),comic,COMMON,131,1000,100,0,BBB,The X-Men Vol. 1,Marvel,2.5,2026-06-27,9.99,2026-08-01
 2090a138-713d-4516-a8f8-625a4f24c3a6,ce33b280-66fc-403c-aa6e-9f7887752744,Uncanny X-Men Vol. 1 #131 (1963),comic,UNCOMMON,131,1000,100,0,BBB,Uncanny X-Men Vol. 1,Marvel,1.5,2026-07-05,10,2026-07-29
-ea12c6f6-6bf8-49e4-b5c2-4c3a6c5d6609,ce33b280-66fc-403c-aa6e-9f7887752744,Uncanny X-Men Vol. 1 #131 (1963),comic,RARE,131,1000,100,0,BBB,Uncanny X-Men Vol. 1,Marvel,3,2026-07-22,11.99,2026-08-01
+ea12c6f6-6bf8-49e4-b5c2-4c3a6c5d6609,ce33b280-66fc-403c-aa6e-9f7887752744,The X-Men Vol. 1 #131 (1963),comic,RARE,131,1000,100,0,BBB,The X-Men Vol. 1,Marvel,3,2026-07-22,11.99,2026-08-01
 5c6e15e5-8608-4414-a42d-1238700a06ca,ce33b280-66fc-403c-aa6e-9f7887752744,Uncanny X-Men Vol. 1 #131 (1963),comic,ULTRA_RARE,131,1000,100,0,BBB,Uncanny X-Men Vol. 1,Marvel,7.75,2026-06-30,30,2026-06-25
 cfc77e73-c03c-4607-944d-c6e62c0dfff9,ce33b280-66fc-403c-aa6e-9f7887752744,Uncanny X-Men Vol. 1 #131 (1963),comic,SECRET_RARE,131,1000,100,0,BBB,Uncanny X-Men Vol. 1,Marvel,6.99,2026-07-28,155,2026-06-25
 83b93838-1d87-4d1c-979a-765f8aa4871c,995d97cb-b06e-45a9-bb2d-5d4bee26e57e,Uncanny X-Men Vol. 1 #158 (1963),comic,COMMON,158,1000,100,0,,Uncanny X-Men Vol. 1,Marvel,1.75,2026-03-26,25,2026-08-24
@@ -15556,11 +15556,11 @@ d8c3b8ad-749b-48b6-be35-f11b5d8d278b,9dca18cd-1a0c-4922-9dfb-f81cd4b03db2,Uncann
 83b099c0-ba7f-4f5e-ada5-a0f2ece8f37a,9dca18cd-1a0c-4922-9dfb-f81cd4b03db2,Uncanny X-Men Vol. 1 #345 (1963),comic,ULTRA_RARE,345,1000,100,0,CC,Uncanny X-Men Vol. 1,Marvel,5.99,2026-04-18,250,2026-04-29
 c015eb2f-9760-439f-96fb-2a35923a10af,9dca18cd-1a0c-4922-9dfb-f81cd4b03db2,Uncanny X-Men Vol. 1 #345 (1963),comic,SECRET_RARE,345,1000,100,0,CC,Uncanny X-Men Vol. 1,Marvel,6.99,2026-06-13,778,2026-04-16
 92120f69-7690-4ca5-9906-33e04d836c1a,77ece4a0-4355-45d3-a769-b907256a31fa,The X-Men Vol. 1 #35 (1963),comic,COMMON,35,1000,100,0,,The X-Men Vol. 1,Marvel,3.08,2026-06-08,113,2026-08-16
-2d5e93f5-05e9-4f17-86bf-4f724fc67ce3,77ece4a0-4355-45d3-a769-b907256a31fa,Uncanny X-Men Vol. 1 #35 (1963),comic,UNCOMMON,35,1000,100,0,,Uncanny X-Men Vol. 1,Marvel,2.34,2026-05-04,9,2026-06-14
+2d5e93f5-05e9-4f17-86bf-4f724fc67ce3,77ece4a0-4355-45d3-a769-b907256a31fa,The X-Men Vol. 1 #35 (1963),comic,UNCOMMON,35,1000,100,0,,The X-Men Vol. 1,Marvel,2.34,2026-05-04,9,2026-06-14
 bb81b2c9-556d-4754-aea6-07ab9a6f5e5c,77ece4a0-4355-45d3-a769-b907256a31fa,Uncanny X-Men Vol. 1 #35 (1963),comic,RARE,35,1000,100,0,,Uncanny X-Men Vol. 1,Marvel,6.69,2026-08-17,19,2026-08-24
 56365ec5-b9a8-4f92-97b3-9270def89726,77ece4a0-4355-45d3-a769-b907256a31fa,Uncanny X-Men Vol. 1 #35 (1963),comic,ULTRA_RARE,35,1000,100,0,,Uncanny X-Men Vol. 1,Marvel,14.99,2026-08-04,100,2026-05-15
 05aa061d-5719-4fdd-aec2-d890b2bad107,77ece4a0-4355-45d3-a769-b907256a31fa,Uncanny X-Men Vol. 1 #35 (1963),comic,SECRET_RARE,35,1000,100,0,,Uncanny X-Men Vol. 1,Marvel,6.99,2026-06-10,595,2026-07-02
-83bea1ae-2abe-4038-8b77-4cf8e10729af,807593a0-03c4-46dd-9c57-821690c0e72c,Uncanny X-Men Vol. 1 #8 (1963),comic,COMMON,8,1000,100,0,,Uncanny X-Men Vol. 1,Marvel,4.75,2026-03-26,939000,2026-06-01
+83bea1ae-2abe-4038-8b77-4cf8e10729af,807593a0-03c4-46dd-9c57-821690c0e72c,The X-Men Vol. 1 #8 (1963),comic,COMMON,8,1000,100,0,,The X-Men Vol. 1,Marvel,4.75,2026-03-26,939000,2026-06-01
 b112df9c-d1bd-4fa1-926a-77905116ffe1,807593a0-03c4-46dd-9c57-821690c0e72c,Uncanny X-Men Vol. 1 #8 (1963),comic,UNCOMMON,8,1000,100,0,,Uncanny X-Men Vol. 1,Marvel,2.69,2026-03-26,8,2026-09-11
 152e868e-3650-4318-ab37-b2968ab6f883,807593a0-03c4-46dd-9c57-821690c0e72c,The X-Men Vol. 1 #8 (1963),comic,RARE,8,1000,100,0,,The X-Men Vol. 1,Marvel,7.5,2026-03-26,39,2026-06-17
 a0247440-7394-4303-9139-d7dd38fe832b,807593a0-03c4-46dd-9c57-821690c0e72c,Uncanny X-Men Vol. 1 #8 (1963),comic,ULTRA_RARE,8,1000,100,0,,Uncanny X-Men Vol. 1,Marvel,17.99,2026-05-17,6666,2026-09-20
@@ -19169,8 +19169,8 @@ a2d6ded7-5036-40d0-98c3-6efebefea51c,150a3263-845e-4f88-88ee-9fbdc305f8b8,Spider
 1bc105bb-5e79-4f28-aae0-b166d21b8f47,150a3263-845e-4f88-88ee-9fbdc305f8b8,Spider-Man 2099 #35 (1992),comic,RARE,35,7500,176,0,CCC,Spider-Man 2099,Marvel,1.89,2025-10-26,125,2025-07-15
 ad97675a-0db6-4e20-a328-93884453e55b,150a3263-845e-4f88-88ee-9fbdc305f8b8,Spider-Man 2099 #35 (1992),comic,ULTRA_RARE,35,7500,176,0,CCC,Spider-Man 2099,Marvel,6,2025-02-04,585,2026-08-01
 aa573d59-b4c2-41f3-ae35-5fbd5cdc1ebf,150a3263-845e-4f88-88ee-9fbdc305f8b8,Spider-Man 2099 #35 (1992),comic,SECRET_RARE,35,7500,176,0,CCC,Spider-Man 2099,Marvel,20.75,2025-02-08,1200,2026-06-03
-07aeafaa-c85b-495c-b401-44d190f4a03d,8b0311f1-3d5f-4e46-a10c-8bed0f111f80,Spider-Man Noir #1 (2008),comic,COMMON,1,7500,176,0,BB,Spider-Man Noir,Marvel,1,2025-01-26,10,2026-01-30
-5980e686-c17d-4cb1-8b91-be03dd486c4f,8b0311f1-3d5f-4e46-a10c-8bed0f111f80,Spider-Man Noir #1 (2008),comic,UNCOMMON,1,7500,176,0,BB,Spider-Man Noir,Marvel,1,2025-02-22,563,2025-07-26
+07aeafaa-c85b-495c-b401-44d190f4a03d,8b0311f1-3d5f-4e46-a10c-8bed0f111f80,Spider-Man Noir Vol. 1 #1 (2008),comic,COMMON,1,7500,176,0,BB,Spider-Man Noir Vol. 1,Marvel,1,2025-01-26,10,2026-01-30
+5980e686-c17d-4cb1-8b91-be03dd486c4f,8b0311f1-3d5f-4e46-a10c-8bed0f111f80,Spider-Man Noir Vol. 1 #1 (2008),comic,UNCOMMON,1,7500,176,0,BB,Spider-Man Noir Vol. 1,Marvel,1,2025-02-22,563,2025-07-26
 8a9aedf4-52c6-4b6b-808c-fbb2ebac0550,8b0311f1-3d5f-4e46-a10c-8bed0f111f80,Spider-Man Noir #1 (2008),comic,RARE,1,7500,176,0,BB,Spider-Man Noir,Marvel,2.95,2025-11-03,200,2025-02-21
 cca219ce-1815-406b-937a-5c077d1123ce,8b0311f1-3d5f-4e46-a10c-8bed0f111f80,Spider-Man Noir #1 (2008),comic,ULTRA_RARE,1,7500,176,0,BB,Spider-Man Noir,Marvel,9,2025-09-05,150,2025-12-27
 15129525-60d6-4675-aa15-207eced5fded,8b0311f1-3d5f-4e46-a10c-8bed0f111f80,Spider-Man Noir #1 (2008),comic,SECRET_RARE,1,7500,176,0,BB,Spider-Man Noir,Marvel,45,2025-04-24,6649,2025-05-02
