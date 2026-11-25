@@ -1,4 +1,4 @@
-# ⚠️ DEPOTS : astronema ET VeVePreda/scrapeur-veve   ·   CHEMIN : scraper/wallet_scan.py
+# ⚠️ DEPOTS : astronema ET Leonessa2/scrapeur-veve   ·   CHEMIN : scraper/wallet_scan.py
 #
 # ⭐ FICHIER VOLONTAIREMENT PARTAGE ET IDENTIQUE dans ces deux depots (verifie
 # byte-a-byte le 29/07/2026). La question n'est donc pas « ou va-t-il ? » mais

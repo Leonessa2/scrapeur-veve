@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : tests/test_arbitrage_nominatif.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : tests/test_arbitrage_nominatif.py
 """⚖️ L'ARBITRAGE DEVIENT UNE DECISION DE CAS, PLUS UNE REGLE DE COLONNE.
 
 ⭐⭐⭐ CE QUE LA MESURE DU 06/08 A TROUVE, ET QUI N'EST PAS « L'ARBITRAGE ETAIT

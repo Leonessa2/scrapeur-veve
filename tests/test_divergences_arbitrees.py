@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve · CHEMIN : tests/test_divergences_arbitrees.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve · CHEMIN : tests/test_divergences_arbitrees.py
 
 """🔎 LE GARDE-FOU DES DIVERGENCES ARBITREES — demande de Preda, 05/08/2026.
 

@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve
 # CHEMIN : tests/test_catalog_export_identite.py
 
 """Pipeline 2 : le catalogue adopte l'identite de la chaine (etape 4.3).

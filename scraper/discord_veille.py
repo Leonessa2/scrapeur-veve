@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : scraper/discord_veille.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : scraper/discord_veille.py
 
 """📰 LA VEILLE DES BLOGS PARTENAIRES — un module hub, N flux RSS, N salons.
 

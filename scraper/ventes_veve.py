@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve  ·  CHEMIN : scraper/ventes_veve.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve  ·  CHEMIN : scraper/ventes_veve.py
 """LOT 210-A3 — LES VENTES DU MARCHE VeVe, UNE PAR LIGNE.
 
 Demande de Preda (29/08) : « il faut aussi les ventes veve des qu'on peut ».

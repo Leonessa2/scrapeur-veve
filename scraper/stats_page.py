@@ -152,8 +152,8 @@ MIGRATION_DAY = os.environ.get("CC_MIGRATION_DAY", "2026-01-28")
 LOCAL_REGISTRY = os.environ.get("STATS_LOCAL_REGISTRY",
                                 "data/wallet_registry_daily.csv")
 REGISTRY_URLS = [u.strip() for u in (os.environ.get("STATS_REGISTRY_URLS") or
-    "https://raw.githubusercontent.com/astronemagame-maker/astronema/main/data/wallet_registry_deep.csv,"
-    "https://raw.githubusercontent.com/lepaolo/paolo/main/data/wallet_registry_imx.csv"
+    "https://raw.githubusercontent.com/Leonessa2/astronema/main/data/wallet_registry_deep.csv,"
+    "https://raw.githubusercontent.com/Leonessa2/paolo/main/data/wallet_registry_imx.csv"
 ).split(",") if u.strip()]
 
 ACTIVITY_TAB = "ChainActivity"
@@ -1358,9 +1358,9 @@ def _fmt_requests(ws_id: int, n_daily: int) -> List[Dict]:
 
 
 # ═══ AGRÉGAT CORNÉRISATION + FICHE 🦊 MENUS LIÉS (16/07) ═══
-REL_ANALYTICS = ("https://github.com/fanablefrance/jetonveve/releases/download/"
+REL_ANALYTICS = ("https://github.com/Leonessa2/jetonveve/releases/download/"
                  "analytics-derived")
-REL_CATALOGUE = ("https://github.com/fanablefrance/jetonveve/releases/download/"
+REL_CATALOGUE = ("https://github.com/Leonessa2/jetonveve/releases/download/"
                  "catalogue")
 FICHE_INDEX_TAB = "_FicheIndex"
 FICHE_MENU_TAB = "_FicheMenu"

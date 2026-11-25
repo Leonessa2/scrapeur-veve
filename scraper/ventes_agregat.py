@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve  ·  CHEMIN : scraper/ventes_agregat.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve  ·  CHEMIN : scraper/ventes_agregat.py
 """LOT 210-A1/A3 — L'AGREGAT DES VENTES QUE LA FICHE PUBLIERA (DEUX MARCHES).
 
 ⭐⭐⭐ CE MODULE NE COLLECTE RIEN, ET C'EST LE COEUR DE SON EXISTENCE.

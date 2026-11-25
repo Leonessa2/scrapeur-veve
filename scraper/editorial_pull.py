@@ -1,7 +1,7 @@
 """
 Récolteur éditorial GÉNÉRIQUE — le constructeur de contenu, étape 1.
 
-⚠️ CE FICHIER VA DANS LE DÉPÔT  VeVePreda/scrapeur-veve , dans  scraper/
+⚠️ CE FICHIER VA DANS LE DÉPÔT  Leonessa2/scrapeur-veve , dans  scraper/
     (chemin exact : scraper/editorial_pull.py)
 
 But (bible/architecture-generateur-sites.md) : lire les onglets d'un **Sheet

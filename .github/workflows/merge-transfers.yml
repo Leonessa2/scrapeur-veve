@@ -36,7 +36,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p arch/holders arch/imx arch/cc
-          gh release download holders-snapshot -R lepaolo/paolo \
+          gh release download holders-snapshot -R Leonessa2/paolo \
             --dir arch/holders --pattern '*.csv.gz' --clobber \
             || echo "⚠️ holders-snapshot indisponible (IMX sortira sans veve_uuid)."
 
@@ -44,7 +44,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release download imx-archive -R lepaolo/paolo \
+          gh release download imx-archive -R Leonessa2/paolo \
             --dir arch/imx --pattern '*.csv.gz' --clobber \
             || echo "⚠️ imx-archive indisponible."
 
@@ -52,7 +52,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release download chain-archive -R astronemagame-maker/astronema \
+          gh release download chain-archive -R Leonessa2/astronema \
             --dir arch/cc --pattern '*.csv.gz' --clobber \
             || echo "⚠️ chain-archive indisponible."
 
@@ -63,7 +63,7 @@ jobs:
           if [ -z "$GH_TOKEN" ]; then
             echo "ℹ️ Pas de PREDA_TOKEN — le quotidien preda est ignore (le deep suffit deja)."
           else
-            gh release download chain-archive-daily -R VeVePreda/scrapeur-veve \
+            gh release download chain-archive-daily -R Leonessa2/scrapeur-veve \
               --dir arch/cc --pattern '*.csv.gz' --clobber \
               || echo "⚠️ chain-archive-daily indisponible."
           fi

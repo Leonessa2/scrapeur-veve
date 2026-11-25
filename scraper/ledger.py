@@ -284,7 +284,7 @@ OG_CUTOFF = os.environ.get("OG_CUTOFF", "2023")
 # jamais l'avancer.
 GOCHAIN_URL = os.environ.get(
     "GOCHAIN_URL",
-    "https://raw.githubusercontent.com/fanablefrance/jetonveve/main/"
+    "https://raw.githubusercontent.com/Leonessa2/jetonveve/main/"
     "data/gochain_wallets.csv")
 # Bareme d'activite en FRANCAIS (Preda 2026-07-10) — remplace
 # Active/Engaged/Dormant/Lapsed/Inactive/Ghost.

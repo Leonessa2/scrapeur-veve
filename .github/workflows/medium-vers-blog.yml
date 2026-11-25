@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : .github/workflows/medium-vers-blog.yml
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : .github/workflows/medium-vers-blog.yml
 name: Medium -> 📝C-BLOG (verser l'archive)
 
 # Verse les 471 articles Medium (2020 -> avril 2023) dans l'onglet 📝C-BLOG, aux

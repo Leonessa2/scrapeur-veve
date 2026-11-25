@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : scraper/ecomi_run.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : scraper/ecomi_run.py
 
 """🪙 ECOMI / TOKEN OMI → l'onglet 📝C-BLOG. UN COLLECTEUR, RIEN D'AUTRE.
 

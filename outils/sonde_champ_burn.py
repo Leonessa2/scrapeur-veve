@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : outils/sonde_champ_burn.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : outils/sonde_champ_burn.py
 #
 # outils/sonde_champ_burn.py — REJOUER la preuve que la date de burn n'est pas
 # collectable chez VeVe. Une requete par nom candidat, sur un comic qui a

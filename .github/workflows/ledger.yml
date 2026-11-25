@@ -33,13 +33,13 @@ on:
         default: "all"
       archive_repo:
         description: "Repo owner/name de l'archive chain-archive"
-        default: "astronemagame-maker/astronema"
+        default: "Leonessa2/astronema"
       snapshot_repo:
         description: "Repo owner/name du snapshot holders-snapshot"
-        default: "lepaolo/paolo"
+        default: "Leonessa2/paolo"
       imx_repo:
         description: "Repo owner/name de l'archive IMX (imx-archive)"
-        default: "lepaolo/paolo"
+        default: "Leonessa2/paolo"
       whales_top:
         description: "Nombre de whales a lister"
         default: "100"
@@ -92,7 +92,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p dl_static
-          REPO="${{ github.event.inputs.archive_repo || 'astronemagame-maker/astronema' }}"
+          REPO="${{ github.event.inputs.archive_repo || 'Leonessa2/astronema' }}"
           gh release download chain-archive --repo "$REPO" --dir dl_static --pattern '*.csv.gz' \
             || echo "Archive transferts indisponible - on continue (snapshot seul)."
           echo "Archive :" && ls -lh dl_static/ || true
@@ -108,7 +108,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p dl_snap
-          REPO="${{ github.event.inputs.snapshot_repo || 'lepaolo/paolo' }}"
+          REPO="${{ github.event.inputs.snapshot_repo || 'Leonessa2/paolo' }}"
           gh release download holders-snapshot --repo "$REPO" --dir dl_snap --pattern '*.csv.gz' \
             || echo "Snapshot holders indisponible - on continue (rejeu seul)."
           echo "Snapshot :" && ls -lh dl_snap/ || true
@@ -127,7 +127,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p dl_imx
-          REPO="${{ github.event.inputs.imx_repo || 'lepaolo/paolo' }}"
+          REPO="${{ github.event.inputs.imx_repo || 'Leonessa2/paolo' }}"
           gh release download imx-archive --repo "$REPO" --dir dl_imx --pattern '*.csv.gz' \
             || echo "Archive IMX indisponible - pulse limite a l'ere CollectChain."
           echo "IMX :" && ls -lh dl_imx/ | head -5 && du -sh dl_imx/ || true

@@ -45,7 +45,7 @@ from scraper import sheet_format as _fmt
 
 BASE = os.environ.get(
     "RELEASE_BASE",
-    "https://github.com/fanablefrance/jetonveve/releases/download/analytics-derived")
+    "https://github.com/Leonessa2/jetonveve/releases/download/analytics-derived")
 MAX_AGE = int(os.environ.get("MAX_AGE_DAYS", "7"))
 SIZE_HEADER_LOCAL = ["dimension", "bucket", "wallets", "pct_wallets",
                      "total", "pct_total"]

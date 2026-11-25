@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : scraper/export_elements_v3.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : scraper/export_elements_v3.py
 # Le projet vit sur 6 depots et DEUX comptes GitHub. Un fichier depose au
 # mauvais endroit ne provoque aucune erreur : il dort.
 

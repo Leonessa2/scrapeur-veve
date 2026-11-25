@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# ⚠️ DEPOT : fanablefrance/jetonveve  ET  VeVePreda/scrapeur-veve
+# ⚠️ DEPOT : Leonessa2/jetonveve  ET  Leonessa2/scrapeur-veve
 # ⚠️ CHEMIN : tests/test_sentinelle_refus_champ.py  (le meme dans les deux)
 #
 # ⛔⛔ Comme le module qu'il surveille, ce banc vit EN DOUBLE, A L'IDENTIQUE.

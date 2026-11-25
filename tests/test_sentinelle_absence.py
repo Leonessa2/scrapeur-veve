@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : tests/test_sentinelle_absence.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : tests/test_sentinelle_absence.py
 """⭐⭐ LA SENTINELLE DOIT ETRE PLUS FIABLE QUE CE QU'ELLE SURVEILLE.
 
 Un garde-fou qu'on ne teste pas est une croyance. Chaque test ici REPRODUIT un
@@ -59,8 +59,8 @@ def entree(**kw):
 
 @pytest.fixture(autouse=True)
 def _proprietaires_connus(monkeypatch):
-    monkeypatch.setitem(S.PROPRIETAIRE, "scrapeur-veve", "VeVePreda")
-    monkeypatch.setitem(S.PROPRIETAIRE, "jetonveve", "fanablefrance")
+    monkeypatch.setitem(S.PROPRIETAIRE, "scrapeur-veve", "Leonessa2")
+    monkeypatch.setitem(S.PROPRIETAIRE, "jetonveve", "Leonessa2")
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -249,17 +249,17 @@ def test_le_Sheet_est_HORS_DE_PORTEE_pas_illisible():
 
 def test_une_ecriture_peut_atterrir_DANS_UN_AUTRE_DEPOT():
     """⭐⭐⭐ Trouve au premier vrai run (07/08) : `catalogue-export` vit dans
-    VeVePreda/scrapeur-veve mais publie sa release dans fanablefrance/jetonveve.
+    Leonessa2/scrapeur-veve mais publie sa release dans Leonessa2/jetonveve.
     La chercher chez l'emetteur rend 404 — et un 404 ressemble a « rien publie »,
     donc a une panne, alors que tout va bien."""
-    ref, ow, dep = S.destination("catalogue@fanablefrance/jetonveve",
-                                 "VeVePreda", "scrapeur-veve")
-    assert (ref, ow, dep) == ("catalogue", "fanablefrance", "jetonveve")
+    ref, ow, dep = S.destination("catalogue@Leonessa2/jetonveve",
+                                 "Leonessa2", "scrapeur-veve")
+    assert (ref, ow, dep) == ("catalogue", "Leonessa2", "jetonveve")
     # sans `@`, on reste chez l'emetteur
-    assert S.destination("catalogue", "VeVePreda", "scrapeur-veve") \
-        == ("catalogue", "VeVePreda", "scrapeur-veve")
+    assert S.destination("catalogue", "Leonessa2", "scrapeur-veve") \
+        == ("catalogue", "Leonessa2", "scrapeur-veve")
     # et la cible reste bien formee aux yeux du classement
-    assert S.genre_cible("release:catalogue@fanablefrance/jetonveve") == "release"
+    assert S.genre_cible("release:catalogue@Leonessa2/jetonveve") == "release"
 
 
 def test_un_404_sur_une_cible_BIEN_ECRITE_n_est_pas_une_faute_de_frappe():
@@ -283,12 +283,13 @@ def test_un_404_sur_une_cible_BIEN_ECRITE_n_est_pas_une_faute_de_frappe():
 # 6. UN JETON PAR COMPTE — contrainte GitHub, pas confort
 # ═══════════════════════════════════════════════════════════════════════════
 def test_un_jeton_par_compte_et_un_compte_sans_jeton_est_AVEUGLE_pas_muet():
-    """Un PAT fine-grained ne porte que sur UN proprietaire, et les workflows
-    surveilles vivent sous deux comptes. Un compte sans jeton doit rendre une
-    ligne noire explicite — pas disparaitre du rapport, pas passer pour sain."""
-    src = S.Source({"VeVePreda": "jeton-A"})          # rien pour fanablefrance
-    d, err = src.dernier_run_reussi("fanablefrance", "jetonveve", "floor-watch.yml")
-    assert d is None and "aucun jeton pour le compte fanablefrance" in err
+    """Un PAT fine-grained ne porte que sur UN proprietaire. Depuis le
+    25/11/2026 tout vit sous Leonessa2, mais la regle tient : un compte sans
+    jeton doit rendre une ligne noire explicite — pas disparaitre du rapport,
+    pas passer pour sain."""
+    src = S.Source({"autre-compte": "jeton-A"})       # rien pour Leonessa2
+    d, err = src.dernier_run_reussi("Leonessa2", "jetonveve", "floor-watch.yml")
+    assert d is None and "aucun jeton pour le compte Leonessa2" in err
 
     e = entree(depot="jetonveve", fichier="floor-watch.yml", fenetre_h=6)
     c = S.ausculter(e, src)
@@ -300,8 +301,8 @@ def test_un_jeton_par_compte_et_un_compte_sans_jeton_est_AVEUGLE_pas_muet():
 def test_un_jeton_unique_couvre_tous_les_comptes():
     """Le PAT classique reste accepte : un seul jeton, portee `*`."""
     src = S.Source("jeton-unique")
-    assert src._jeton("fanablefrance") == "jeton-unique"
-    assert src._jeton("VeVePreda") == "jeton-unique"
+    assert src._jeton("autre-compte") == "jeton-unique"
+    assert src._jeton("Leonessa2") == "jeton-unique"
 
 
 @pytest.mark.parametrize("cible,attendu", [

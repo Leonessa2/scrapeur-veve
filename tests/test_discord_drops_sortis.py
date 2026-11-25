@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : tests/test_discord_drops_sortis.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : tests/test_discord_drops_sortis.py
 # Le projet vit sur 6 depots et DEUX comptes GitHub. Un fichier
 # depose au mauvais endroit ne provoque aucune erreur : il dort.
 

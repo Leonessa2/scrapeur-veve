@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : scraper/sentinelle_absence.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : scraper/sentinelle_absence.py
 """🛰️ sentinelle_absence — « qui aurait du tourner aujourd'hui, et n'a rien fait ? »
 
 POURQUOI CE MODULE EXISTE
@@ -29,8 +29,8 @@ LES QUATRE QUESTIONS QU'ELLE POSE
   4. AVEUGLEMENT  — y a-t-il un depot que je n'ai pas pu lire ?
 
 ⭐⭐⭐ (3) EST LE POINT QUE TOUT LE MONDE OUBLIE : L'AGE NE SUFFIT PAS, L'ORDRE
-COMPTE. `ledger-writer` (jeudi, VeVePreda/scrapeur-veve) consomme `analytics`
-(mercredi, fanablefrance/jetonveve). `workflow_run` NE FRANCHIT PAS la frontiere
+COMPTE. `ledger-writer` (jeudi, Leonessa2/scrapeur-veve) consomme `analytics`
+(mercredi, Leonessa2/jetonveve). `workflow_run` NE FRANCHIT PAS la frontiere
 d'un depot : le jeudi, ledger-writer part a l'heure quel que soit l'etat
 d'analytics. Si analytics glisse ou tombe, le ledger s'ecrit depuis un derive
 perime — ET LE RUN EST VERT. Les deux sont frais au sens de l'age, et le
@@ -93,13 +93,16 @@ API = "https://api.github.com"
 # ici ne produit pas une exception mais un 404 -> qui ressemble a « n'a jamais
 # tourne ». Un depot dont le proprietaire vaut "?" est declare AVEUGLE, jamais
 # silencieusement saute.
+# 25/11/2026 : le compte VeVePreda est devenu `Leonessa2`, et fanablefrance,
+# lepaolo et astronemagame-maker lui ont transfere leurs depots. Tout vit
+# desormais sous UN SEUL compte.
 PROPRIETAIRE = {
-    "scrapeur-veve": "VeVePreda",
-    "veve-sites": "VeVePreda",
-    "jetonveve": "fanablefrance",
+    "scrapeur-veve": "Leonessa2",
+    "veve-sites": "Leonessa2",
+    "jetonveve": "Leonessa2",
     # ⭐ Releves le 07/08 dans les `-R` de merge-transfers.yml, pas devines.
-    "astronema": "astronemagame-maker",
-    "paolo": "lepaolo",
+    "astronema": "Leonessa2",
+    "paolo": "Leonessa2",
 }
 
 # ⭐⭐⭐ TROIS SORTES DE CIBLES, ET LES CONFONDRE SERAIT LE PIRE DES DEUX MONDES.
@@ -131,11 +134,11 @@ def genre_cible(c: str) -> str:
 
 def destination(ref: str, owner: str, depot: str) -> tuple[str, str, str]:
     """⭐⭐⭐ UNE ECRITURE N'ATTERRIT PAS FORCEMENT DANS LE DEPOT QUI L'EMET.
-    Mesure du 07/08 : `catalogue-export` vit dans VeVePreda/scrapeur-veve mais
-    publie sa release dans **fanablefrance/jetonveve** (`gh release -R`). Chercher
+    Mesure du 07/08 : `catalogue-export` vit dans Leonessa2/scrapeur-veve mais
+    publie sa release dans **Leonessa2/jetonveve** (`gh release -R`). Chercher
     la release chez l'emetteur rend 404 — et un 404 ressemble a « rien publie »,
     donc a une panne, alors que tout va bien.
-    Syntaxe : `release:catalogue@fanablefrance/jetonveve`. Sans `@`, on reste
+    Syntaxe : `release:catalogue@Leonessa2/jetonveve`. Sans `@`, on reste
     chez l'emetteur."""
     if "@" not in ref:
         return ref, owner, depot
@@ -209,8 +212,8 @@ class Source:
 
     ⭐⭐⭐ UN JETON PAR PROPRIETAIRE, ET C'EST UNE CONTRAINTE DE GITHUB, PAS UN
     caprice : un PAT « fine-grained » ne porte QUE sur les depots d'UN SEUL
-    proprietaire. Les 25 workflows surveilles vivent sous DEUX comptes
-    (`VeVePreda` et `fanablefrance`) — un seul jeton fin ne peut donc pas les
+    proprietaire. Les 25 workflows surveilles vivaient sous DEUX comptes
+    (avant le 25/11/2026 ; tout est sous `Leonessa2` depuis) — un seul jeton fin ne pouvait donc pas les
     couvrir. Le classique le pourrait, mais son unique portee `repo` donne
     l'ECRITURE sur tout : un jeton qui dort dans Actions pour LIRE des dates
     n'a aucune raison de pouvoir pousser du code.
@@ -431,15 +434,15 @@ def main(argv=None) -> int:
     # Un jeton par compte GitHub (PAT fine-grained, lecture seule), avec repli
     # sur un jeton unique (PAT classique) si l'on prefere n'en gerer qu'un.
     jetons = {
-        "VeVePreda": os.environ.get("SENTINELLE_TOKEN_VEVEPREDA", ""),
-        "fanablefrance": os.environ.get("SENTINELLE_TOKEN_FANABLEFRANCE", ""),
+        # Le nom du secret est historique : il porte le jeton du compte Leonessa2.
+        "Leonessa2": os.environ.get("SENTINELLE_TOKEN_VEVEPREDA", ""),
         "*": os.environ.get("SENTINELLE_TOKEN", ""),
     }
     if not any(jetons.values()):
         # ⛔ Pas de sortie silencieuse : sans jeton elle est aveugle sur TOUT,
         #    et c'est exactement ce qu'il faut crier.
         msg = ("⚫ **Sentinelle aveugle** : aucun jeton (`SENTINELLE_TOKEN_VEVEPREDA` / "
-               "`SENTINELLE_TOKEN_FANABLEFRANCE` / `SENTINELLE_TOKEN`). "
+               "`SENTINELLE_TOKEN`). "
                "Elle n'a rien pu lire — ⛔ ne pas confondre avec « tout va bien ».")
         print(msg)
         if not a.a_blanc:

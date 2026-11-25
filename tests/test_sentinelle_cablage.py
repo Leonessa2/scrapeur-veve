@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : tests/test_sentinelle_cablage.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : tests/test_sentinelle_cablage.py
 """A4 — le CABLAGE de la sentinelle sur les 4 sources (29/07/2026).
 
 ⭐⭐ CE QUE CE BANC ATTRAPE, ET QUE RIEN D'AUTRE NE VOIT.

@@ -1,9 +1,9 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : .github/workflows/catalogue-export.yml
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : .github/workflows/catalogue-export.yml
 # Le projet vit sur 6 depots et DEUX comptes GitHub. Un fichier depose au
 # mauvais endroit ne provoque aucune erreur : il dort.
 #
 # 🔴 CE FICHIER A DEJA ETE DEPOSE UNE FOIS AU MAUVAIS ENDROIT (29/07/2026) :
-#    il est parti chez fanablefrance/jetonveve. Il n'y a rien casse — jetonveve
+#    il est parti chez Leonessa2/jetonveve. Il n'y a rien casse — jetonveve
 #    n'a pas `scraper/catalog_export.py`, le run echoue avant de publier — mais
 #    la chaine est restee ouverte une journee entiere pendant que l'etat
 #    affichait « depose ». D'ou cet en-tete : sans lui, `etat_reel.py` ne peut
@@ -14,8 +14,10 @@ name: catalogue-export
 # jour) en Release `catalogue` sur jetonveve (public). Rend l'entrepot
 # AUTOSUFFISANT : alertes/chatbot/tracking joignent les noms par uuid sans
 # acces Google. Tourne sur PREDA (les donnees viennent du Sheet) apres le
-# daily. Secret requis : JETONVEVE_TOKEN (PAT fine-grained du compte
-# fanablefrance, contents read/write sur le seul repo jetonveve).
+# daily. Secret requis : JETONVEVE_TOKEN (PAT fine-grained, contents
+# read/write sur le seul repo jetonveve). ⚠️ 25/11/2026 : jetonveve appartient
+# desormais a Leonessa2 ; un jeton cree sur l'ancien compte fanablefrance ne
+# l'atteint plus — le recreer sur Leonessa2 s'il echoue.
 
 on:
   workflow_dispatch:
@@ -71,7 +73,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.JETONVEVE_TOKEN }}
         run: |
-          R="fanablefrance/jetonveve"
+          R="Leonessa2/jetonveve"
           if [ -z "$GH_TOKEN" ]; then
             echo "ERREUR : secret JETONVEVE_TOKEN absent." && exit 1
           fi
@@ -111,7 +113,7 @@ jobs:
       #
       #  ⚠️ POURQUOI UN `repository_dispatch` ET PAS UN `workflow_run` :
       #     `workflow_run` ne franchit PAS la frontiere d'un depot. Ce maillon
-      #     va de VeVePreda/scrapeur-veve a fanablefrance/jetonveve. Le seul
+      #     va de Leonessa2/scrapeur-veve a Leonessa2/jetonveve. Le seul
       #     mecanisme inter-depots est le dispatch — celui-la meme que le pinger
       #     du VPS utilise deja pour floor-watch.
       #
@@ -134,7 +136,7 @@ jobs:
             echo "⚠️ JETONVEVE_TOKEN absent — pas de dispatch. Le cron de 07:11 reste le filet."
             exit 0
           fi
-          if gh api -X POST repos/fanablefrance/jetonveve/dispatches \
+          if gh api -X POST repos/Leonessa2/jetonveve/dispatches \
                -f event_type=catalogue-pret >/dev/null 2>&1; then
             echo "✅ price-history prevenu (evenement « catalogue-pret »)."
           else

@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve
 # CHEMIN : tests/test_catalog_export_colonnes.py
 
 """Pipeline 2 : AUCUNE colonne lue ne se perd entre le Sheet et le catalogue.

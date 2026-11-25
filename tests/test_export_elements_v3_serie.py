@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve
 # CHEMIN : tests/test_export_elements_v3_serie.py
 
 """La 17e colonne : la SERIE on-chain.

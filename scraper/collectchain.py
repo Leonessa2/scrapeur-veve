@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : scraper/collectchain.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : scraper/collectchain.py
 #
 # ⛔ CE FICHIER EXISTE EN TROIS EXEMPLAIRES DIVERGENTS : ici (559 l.),
 # `astronema` et `paolo` (491 l. chacun). Aucun ne portait son adresse, si

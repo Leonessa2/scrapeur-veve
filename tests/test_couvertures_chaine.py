@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : tests/test_couvertures_chaine.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : tests/test_couvertures_chaine.py
 
 """🖼️ Banc du report des couvertures on-chain (lot 48, 03/08/2026).
 

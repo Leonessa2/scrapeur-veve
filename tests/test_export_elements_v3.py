@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : tests/test_export_elements_v3.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : tests/test_export_elements_v3.py
 """Tests du pont v3 (catalogue depuis la chaine).
 
 Fixtures = deux transferts REELS sondes sur CollectScan le 23/07 (le comic

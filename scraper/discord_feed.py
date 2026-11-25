@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : scraper/discord_feed.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : scraper/discord_feed.py
 # (comme discord_api.py, un jumeau du dossier scraper existe dans jetonveve/ —
 #  ce fichier va dans scrapeur-veve, avec les autres modules du hub.)
 

@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : fanablefrance/jetonveve  ET  VeVePreda/scrapeur-veve
+# ⚠️ DEPOT : Leonessa2/jetonveve  ET  Leonessa2/scrapeur-veve
 # ⚠️ CHEMIN : scraper/sentinelle_sources.py  (le meme dans les deux)
 #
 # ⛔⛔ CE FICHIER VIT EN DOUBLE, A L'IDENTIQUE, DANS DEUX DEPOTS ET DEUX COMPTES
@@ -469,8 +469,8 @@ def _releve_de_fin() -> None:
 _atexit.register(_releve_de_fin)
 
 
-# ⛔⛔ CE FICHIER EXISTE EN DEUX EXEMPLAIRES : `fanablefrance/jetonveve` et
-# `VeVePreda/scrapeur-veve`. L'audit des depots du 29/07 a nomme le module en
+# ⛔⛔ CE FICHIER EXISTE EN DEUX EXEMPLAIRES : `Leonessa2/jetonveve` et
+# `Leonessa2/scrapeur-veve`. L'audit des depots du 29/07 a nomme le module en
 # double qui a DIVERGE comme le vrai risque du projet — pas le fichier egare.
 # Les deux copies doivent rester OCTET POUR OCTET identiques ; un test
 # d'empreinte dans chaque depot le verifie. Si tu modifies ce fichier, tu le

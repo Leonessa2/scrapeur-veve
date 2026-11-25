@@ -89,7 +89,7 @@ TAILLES = [100, 50, 25]          # degradation de page
 
 def _entetes() -> Dict[str, str]:
     return {"Authorization": f"Bot {BOT}",
-            "User-Agent": "ScrapeurVeVe-Archive (+github/VeVePreda)"}
+            "User-Agent": "ScrapeurVeVe-Archive (+github/Leonessa2)"}
 
 
 def _get(url: str, params: Dict = None) -> Optional[List[Dict]]:

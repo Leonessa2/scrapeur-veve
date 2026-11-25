@@ -9,7 +9,7 @@
 #
 # ✅ PERIMETRE CLOS LE 07/08 — 53 EST DESORMAIS UN TOTAL, PLUS UN PLANCHER.
 #    Preda a ouvert l'onglet Actions de `Predabot`, `veveid`,
-#    `VeVePreda/VeVeWiki` et `VeVePreda/arena` : les quatre sont VIDES.
+#    `Leonessa2/VeVeWiki` et `Leonessa2/arena` : les quatre sont VIDES.
 #    ⭐ Ce n'est pas mon miroir `github/` qui l'a dit — ses copies avaient
 #    3 semaines a 3 mois et n'auraient prouve que leur propre age.
 #
@@ -445,8 +445,8 @@ workflows:
   nom: catalogue-export
   cadence: 41 6 * * *
   ecrit:
-  - release:catalogue-prev@fanablefrance/jetonveve
-  - release:catalogue@fanablefrance/jetonveve
+  - release:catalogue-prev@Leonessa2/jetonveve
+  - release:catalogue@Leonessa2/jetonveve
   - sheet
   alerte_echec: non
   fenetre_h: 36

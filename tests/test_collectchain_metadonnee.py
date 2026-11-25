@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve · CHEMIN : tests/test_collectchain_metadonnee.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve · CHEMIN : tests/test_collectchain_metadonnee.py
 
 """🔗 LA METADONNEE ON-CHAIN — le banc qui empeche le 5e oubli.
 

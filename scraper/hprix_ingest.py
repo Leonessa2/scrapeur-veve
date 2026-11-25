@@ -12,7 +12,7 @@ Un WATERMARK (data/hprix_watermark.txt = le dernier ts ingere) evite de retraite
 le feed a chaque run — sinon une valeur ancienne, differente de l'etat courant,
 se re-appendrait en double.
 
-Le feed est PUBLIC (repo fanablefrance/jetonveve) : le workflow le recupere en
+Le feed est PUBLIC (repo Leonessa2/jetonveve) : le workflow le recupere en
 sparse-checkout SANS token. S'il manque, on ne touche a rien (le pont s'eteint
 tout seul — c'est le pont elements.csv, a l'envers).
 

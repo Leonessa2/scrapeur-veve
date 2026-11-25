@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : tests/test_egress_capteur.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : tests/test_egress_capteur.py
 """🛰️ LE CAPTEUR DE SORTIES DIRECTES (06/08/2026, lot 81).
 
 ⭐⭐ ON NE SUPPRIME PAS UNE PROTECTION, ON LA REMPLACE PAR UN CAPTEUR. Le proxy

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve · CHEMIN : tests/test_archive_token_id.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve · CHEMIN : tests/test_archive_token_id.py
 
 """🔗 LE TOKEN_ID SURVIT AU STOCKAGE — phase 2 de « CollectChain d'abord ».
 
@@ -37,7 +37,7 @@ from scraper import collectchain as cc                     # noqa: E402
 
 # L'ordre HISTORIQUE des 10 premieres colonnes. Fige ici en dur, separement de
 # `ARCHIVE_HEADER`, parce que c'est un CONTRAT INTER-DEPOTS : `merge_transfers`
-# (fanablefrance/jetonveve) lit ce format par POSITION (`p[0]`..`p[9]`).
+# (Leonessa2/jetonveve) lit ce format par POSITION (`p[0]`..`p[9]`).
 # ⛔ Le relire depuis `ARCHIVE_HEADER` rendrait le banc tautologique : il
 # validerait le fichier contre lui-meme et ne pourrait plus jamais echouer.
 DIX_PREMIERES_HISTORIQUES = ["block", "log_index", "ts_utc", "date_pt", "kind",

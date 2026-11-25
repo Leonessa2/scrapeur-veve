@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : outils/annonce_visuel/gabarit.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : outils/annonce_visuel/gabarit.py
 # Le projet vit sur 6 depots et DEUX comptes GitHub. Un fichier
 # depose au mauvais endroit ne provoque aucune erreur : il dort.
 

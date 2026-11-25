@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve · CHEMIN : tests/test_format_archive_partage.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve · CHEMIN : tests/test_format_archive_partage.py
 
 """🧬 LE FORMAT D'ARCHIVE EST PARTAGE — phase 4.1, volet « meme depot ».
 
@@ -45,7 +45,7 @@ RACINE = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RACINE))
 
 # Les 10 premieres colonnes sont un CONTRAT INTER-DEPOTS : `merge_transfers.py`
-# (fanablefrance/jetonveve) lit ce format par POSITION (`p[0]`..`p[9]`), avec un
+# (Leonessa2/jetonveve) lit ce format par POSITION (`p[0]`..`p[9]`), avec un
 # garde `len(p) < 10`. Figees ici en dur, separement des modules : les relire
 # depuis l'un d'eux validerait le depot contre lui-meme.
 DIX_PREMIERES_HISTORIQUES = ["block", "log_index", "ts_utc", "date_pt", "kind",

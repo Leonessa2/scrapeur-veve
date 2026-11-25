@@ -1,9 +1,9 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : tests/test_sentinelle_partagee.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : tests/test_sentinelle_partagee.py
 """A4 — la sentinelle etendue aux sources irremplacables (29/07/2026).
 
 ⛔⛔ CE BANC GARDE UN FICHIER QUI VIT EN DOUBLE.
-`scraper/sentinelle_sources.py` existe a l'identique dans `fanablefrance/jetonveve`
-ET `VeVePreda/scrapeur-veve`. L'audit des depots du 29/07 a nomme le module en
+`scraper/sentinelle_sources.py` existe a l'identique dans `Leonessa2/jetonveve`
+ET `Leonessa2/scrapeur-veve`. L'audit des depots du 29/07 a nomme le module en
 double qui a DIVERGE comme le vrai risque du projet — pas le fichier egare :
 deux copies partent identiques, l'une recoit un correctif, l'autre continue de
 tourner avec l'ancien comportement, et rien n'echoue.
@@ -21,9 +21,9 @@ MODULE = RACINE / "scraper" / "sentinelle_sources.py"
 # Empreinte du fichier partage. ⚠️ LA DATE SE MET A JOUR AVEC L'EMPREINTE :
 # le 06/08/2026 elle disait encore « au 29/07 » alors que le fichier avait
 # bouge au lot 76 — un commentaire perime a cote d'un chiffre juste se relit
-# comme une preuve que rien n'a change. Derniere mise a jour : 06/08/2026,
-# lot 81 (le seau `absent` : HTTP 200 + errors[]).
-EMPREINTE = "7da777643e5fe3cefafe54e7b606ec7c8468de17b931fe56d45e76ad68637315"
+# comme une preuve que rien n'a change. Derniere mise a jour : 25/11/2026,
+# renommage du compte GitHub VeVePreda -> Leonessa2 (en-tete seulement).
+EMPREINTE = "caa1ec235ae6d6accf66329539c39427510055c182bf3dc06704887f854c8607"
 
 
 def test_le_module_partage_n_a_pas_bouge():

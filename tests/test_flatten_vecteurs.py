@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # ⚠️ CE FICHIER EST PARTAGE PAR TROIS DEPOTS — c'est tout son interet.
-#   VeVePreda/scrapeur-veve          tests/test_flatten_vecteurs.py   (REFERENCE)
-#   astronemagame-maker/astronema    tests/test_flatten_vecteurs.py
-#   lepaolo/paolo                    tests/test_flatten_vecteurs.py
+#   Leonessa2/scrapeur-veve          tests/test_flatten_vecteurs.py   (REFERENCE)
+#   Leonessa2/astronema    tests/test_flatten_vecteurs.py
+#   Leonessa2/paolo                    tests/test_flatten_vecteurs.py
 # Avec `tests/vecteurs_flatten.json`, a copier tel quel a cote.
 
 """🧬 LES TROIS COPIES DE `_flatten` DOIVENT REPONDRE PAREIL — phase 4.1.
@@ -33,7 +33,7 @@ divergence se nomme.
 ## 📌 SI CE BANC ROUGIT DANS `astronema` OU `paolo`
 
 Ce n'est pas le banc qui est faux : c'est cette copie de `collectchain.py` qui
-est en retard sur la reference (`VeVePreda/scrapeur-veve`). Le message nomme le
+est en retard sur la reference (`Leonessa2/scrapeur-veve`). Le message nomme le
 champ. ⛔ Ne pas regenerer les vecteurs depuis la copie en retard — ce serait
 graver la divergence au lieu de la corriger.
 
@@ -87,7 +87,7 @@ def test_les_vecteurs_sont_bien_la_et_couvrent_les_kind():
     assert cas, (
         f"⛔ {VECTEURS} est ABSENT. Ce banc compare le comportement de la copie "
         f"locale de `collectchain._flatten` a celui de la reference "
-        f"(VeVePreda/scrapeur-veve) : sans les vecteurs, il ne teste rien. "
+        f"(Leonessa2/scrapeur-veve) : sans les vecteurs, il ne teste rien. "
         f"Copier `tests/vecteurs_flatten.json` depuis le depot de reference.")
     assert len(cas) >= 10, f"seulement {len(cas)} vecteurs"
     kinds = {c["attendu"]["kind"] for c in cas}
@@ -109,7 +109,7 @@ def test_flatten_repond_comme_la_reference(cas):
     assert not manquants, (
         f"« {cas['nom']} » : champ(s) que cette copie ne produit PAS : "
         f"{manquants}. Cette copie de `collectchain.py` est en retard sur la "
-        f"reference (VeVePreda/scrapeur-veve).")
+        f"reference (Leonessa2/scrapeur-veve).")
 
     for champ, valeur in sorted(attendu.items()):
         assert obtenu[champ] == valeur, (

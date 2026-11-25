@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : .github/workflows/sentinelle.yml
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : .github/workflows/sentinelle.yml
 #
 # 🔴🔴🔴 CE FICHIER SE COLLE A LA MAIN DANS L'EDITEUR WEB DE GITHUB.
 # Un zip depose par « Add files via upload » N'INSTALLE PAS `.github/workflows/*` :
@@ -52,21 +52,20 @@ jobs:
 
       # ⛔ SENTINELLE_TOKEN, PAS `GITHUB_TOKEN` : le jeton d'un run ne voit QUE
       #    son propre depot. Les 25 workflows a cron vivent dans TROIS depots,
-      #    sur DEUX comptes — VeVePreda/scrapeur-veve, VeVePreda/veve-sites et
-      #    fanablefrance/jetonveve. (`astronema` et `paolo` n'ont que des
+      #    tous sous le compte Leonessa2 depuis le 25/11/2026 — Leonessa2/scrapeur-veve, Leonessa2/veve-sites et
+      #    Leonessa2/jetonveve. (`astronema` et `paolo` n'ont que des
       #    workflows manuels : rien a surveiller, ils relevent de l'etage 1.)
       #    Avec le jeton par defaut, les deux autres depots rendraient 404 —
       #    ce qui ressemble trait pour trait a « n'a jamais tourne ».
       #    Portee minimale du PAT : lecture Actions + contenu sur ces trois.
-      #    ⭐⭐⭐ ET IL EN FAUT **DEUX**, pas un : un PAT « fine-grained » ne
-      #    porte que sur les depots d'UN SEUL proprietaire, et il y a deux
-      #    comptes. Un PAT classique unique marcherait, mais sa seule portee
+      #    Un PAT « fine-grained » ne porte que sur les depots d'UN SEUL
+      #    proprietaire : depuis le 25/11/2026 il n'y en a plus qu'un
+      #    (Leonessa2), donc UN seul jeton suffit. Un PAT classique unique marcherait, mais sa seule portee
       #    `repo` donne l'ECRITURE sur tout — pour lire des dates, non.
       #    (Le repli `SENTINELLE_TOKEN` reste lu si tu preferes le classique.)
       - name: Sentinelle
         env:
           SENTINELLE_TOKEN_VEVEPREDA: ${{ secrets.SENTINELLE_TOKEN_VEVEPREDA }}
-          SENTINELLE_TOKEN_FANABLEFRANCE: ${{ secrets.SENTINELLE_TOKEN_FANABLEFRANCE }}
           SENTINELLE_TOKEN: ${{ secrets.SENTINELLE_TOKEN }}
           DISCORD_ALERTE_TECH_WEBHOOK: ${{ secrets.DISCORD_ALERTE_TECH_WEBHOOK }}
         run: |

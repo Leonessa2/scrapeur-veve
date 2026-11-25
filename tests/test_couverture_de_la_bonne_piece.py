@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : tests/test_couverture_de_la_bonne_piece.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : tests/test_couverture_de_la_bonne_piece.py
 """🖼️ LA COUVERTURE D'UNE AUTRE PIECE N'EST PAS « UNE COUVERTURE » (06/08/2026).
 
 ⭐⭐ CE QUE CE BANC ATTRAPE. `sheets._normalise` ne posait la couverture

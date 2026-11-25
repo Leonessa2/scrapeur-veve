@@ -118,7 +118,7 @@ BACKFILL = os.environ.get("VEVE_TX_BACKFILL", "false").lower() == "true"
 # le fusionne dans l'onglet _VeveRevenue -> l'historique remonte tout seul.
 REMOTE_CSV = os.environ.get(
     "VEVE_TX_REMOTE_CSV",
-    "https://raw.githubusercontent.com/lepaolo/paolo/main/data/veve_tx_daily.csv")
+    "https://raw.githubusercontent.com/Leonessa2/paolo/main/data/veve_tx_daily.csv")
 UNTIL = os.environ.get("VEVE_TX_UNTIL", "").strip()
 WITH_PSEUDOS = os.environ.get("VEVE_TX_PSEUDOS", "true").lower() != "false"
 MAX_PAGES = int(os.environ.get("VEVE_TX_MAX_PAGES",

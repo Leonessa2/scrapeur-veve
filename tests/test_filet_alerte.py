@@ -40,7 +40,7 @@ est vert par construction, et ne prouve rien.
 
 ⚠️ CE QU'IL NE PEUT PAS FAIRE
 ─────────────────────────────
-Il ne voit que CE depot. Le filet jumeau de `fanablefrance/jetonveve` a les
+Il ne voit que CE depot. Le filet jumeau de `Leonessa2/jetonveve` a les
 memes regles et personne ne les verifie : jetonveve n'a aucun banc, ni meme un
 workflow qui en lancerait. C'est un trou connu, pas un oubli.
 """

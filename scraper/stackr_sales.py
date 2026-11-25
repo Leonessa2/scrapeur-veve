@@ -54,7 +54,7 @@ SALES_CSV = os.environ.get("SALES_CSV", "data/stackr_sales.csv")
 REVENUE_TAB = "_MarketRevenue"
 REVENUE_HEADER = ["date", "sales", "omi", "omi_usd", "usd", "source"]
 SPLIT_URL = os.environ.get("SALES_SPLIT_URL",
-    "https://raw.githubusercontent.com/fanablefrance/jetonveve/main/"
+    "https://raw.githubusercontent.com/Leonessa2/jetonveve/main/"
     "data/burns_split_daily.csv")
 SALES_HEADER = ["id", "ts_utc", "date_pt", "element_id", "element_type",
                 "edition", "name", "rarity", "price_omi", "seller", "buyer",

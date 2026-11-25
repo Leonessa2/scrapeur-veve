@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : tests/test_discord_sondage.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : tests/test_discord_sondage.py
 
 """🗳️ LE SONDAGE A DEUX SALONS — un votant, une voix.
 

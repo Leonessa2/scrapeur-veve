@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : tests/test_plafond_extremes.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : tests/test_plafond_extremes.py
 
 """🎪 Banc du plafond de vraisemblance sur ATL/ATH (lot 49, 03/08/2026).
 

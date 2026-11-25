@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : tests/test_miroir_orphelin.py   (NEUF)
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : tests/test_miroir_orphelin.py   (NEUF)
 """♻️ L'ORPHELIN DU MIROIR — « un delai n'est pas une preuve de non-creation ».
 
 🔴🔴🔴 LE DEFAUT, MESURE LE 20/08/2026

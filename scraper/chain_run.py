@@ -55,7 +55,7 @@ from scraper import chain_sheets as cs
 #     base_build.py       read_csv_auto    -> par NOM,      ignore l'ajout
 #     merge_transfers.py  p[0]..p[9]       -> par POSITION, garde `len(p) < 10`
 # Le troisieme casserait si on inserait au milieu — et il vit dans un AUTRE
-# depot (fanablefrance/jetonveve) : il ne casserait donc pas ici, il casserait
+# depot (Leonessa2/jetonveve) : il ne casserait donc pas ici, il casserait
 # ailleurs, plus tard, sans rien dire.
 # ⭐⭐ UN FORMAT PARTAGE PAR TROIS DEPOTS NE SE MODIFIE QU'EN FIN : CE QUI LIT
 # PAR POSITION NE SE PLAINT JAMAIS, IL SE DECALE.

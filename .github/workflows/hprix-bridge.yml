@@ -49,7 +49,7 @@ jobs:
         continue-on-error: true
         uses: actions/checkout@v4
         with:
-          repository: fanablefrance/jetonveve
+          repository: Leonessa2/jetonveve
           path: _jetonveve
           sparse-checkout: data/hprix_feed.csv
           sparse-checkout-cone-mode: false

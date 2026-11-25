@@ -1,4 +1,4 @@
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : tests/test_lecture_non_formatee.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : tests/test_lecture_non_formatee.py
 
 """🔴 Banc de la lecture NON FORMATÉE du catalogue (lot 50, 03/08/2026).
 

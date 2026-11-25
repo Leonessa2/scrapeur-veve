@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# ⚠️ DEPOT : VeVePreda/scrapeur-veve   ·   CHEMIN : scraper/catalog_export.py
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : scraper/catalog_export.py
 # Le projet vit sur 6 depots et DEUX comptes GitHub. Un fichier depose au
 # mauvais endroit ne provoque aucune erreur : il dort.
 """catalog_export — catalogue exploitable HORS Sheet (preda -> Release jetonveve).
