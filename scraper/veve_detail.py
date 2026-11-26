@@ -592,10 +592,18 @@ def enrich_brand_media(cids: List[str], workers: int = DEFAULT_WORKERS) \
         return {}
     _decide_egress()
     probe = fetch_brand_media(cids[0])
-    if not probe or not (probe.get("brand_image") or probe.get("licensor_image")):
-        print("Brand media: VeVe returned no brand/licensor image on the probe "
-              "(field name may differ) — skipping logo collection.", flush=True)
-        return {cids[0]: probe} if probe else {}
+    # 26/11/2026 : seule une requete REJETEE (probe None : errors[] ou HTTP)
+    # prouve un champ faux. Une marque SANS logo chez VeVe renvoie un noeud
+    # valide avec landscapeImage vide : ce n'est pas une panne de requete —
+    # l'ancien test sautait alors toutes les autres marques (vu le 26/11 :
+    # 2 marques sondees, 0 logo, alors que la requete marche).
+    if not probe:
+        print("Brand media: VeVe rejected the probe query (field name may "
+              "differ) — skipping logo collection.", flush=True)
+        return {}
+    if not (probe.get("brand_image") or probe.get("licensor_image")):
+        print(f"Brand media: probe brand « {probe.get('brand_name')} » has no "
+              f"logo on VeVe (query OK) — continuing with the others.", flush=True)
     out: Dict[str, Dict[str, Any]] = {cids[0]: probe}
 
     def task(c: str):
