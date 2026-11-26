@@ -29,6 +29,10 @@ on:
         default: "new"
         type: choice
         options: ["new", "all"]
+      window_days:
+        description: "Catalogue (mode new) : fenetre en jours (defaut 8). Rattrapage cible : ex. 200 = complete seulement les fiches absentes du Sheet sorties sur 200 jours"
+        required: false
+        default: "8"
 
 
 permissions:
@@ -88,7 +92,7 @@ jobs:
         if: ${{ contains(env.STEPS, 'all') || contains(env.STEPS, 'catalogue') }}
         env:
           ENRICH_MODE: ${{ github.event.inputs.enrich_mode || 'new' }}
-          WINDOW_DAYS: "8"
+          WINDOW_DAYS: ${{ github.event.inputs.window_days || '8' }}
           REFRESH_DYNAMIC: "true"
           ELEMENTS_V3: data/elements_v3.csv
           COUVERTURES_CHAINE: ${{ vars.COUVERTURES_CHAINE || '1' }}
