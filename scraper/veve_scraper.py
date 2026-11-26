@@ -9,7 +9,7 @@ accepts pre-registered "persisted queries", so it can't be scraped directly.
 my-nft-tracker.com is a community VeVe tracker that already aggregates the *entire*
 VeVe catalogue and exposes it through a clean, unauthenticated REST API:
 
-    https://my-nft-tracker-backend.azurewebsites.net/api/Nfts
+    https://api.my-nft-tracker.com/api/Nfts   (ex-azurewebsites, coupe le 30/09/2026)
 
 That endpoint returns fully structured JSON (name, edition, type/category, rarity,
 release date, mint amounts, store price, series, brand, licensor, images, and the
@@ -30,7 +30,12 @@ from typing import Any, Dict, List, Optional
 import requests
 from scraper import sentinelle_sources as _ss   # 🩺 A4 : compter ce que la source repond
 
-API_BASE = "https://my-nft-tracker-backend.azurewebsites.net"
+# 26/11/2026 : l'ancienne adresse (my-nft-tracker-backend.azurewebsites.net)
+# repond « 403 Site Disabled » depuis le 30/09/2026 — c'etait la panne des 4
+# taches (daily, comic-prices, floors, logos). Le site my-nft-tracker.com lit
+# desormais api.my-nft-tracker.com (meme format, mesure le 26/11 : 21 466
+# fiches, pages de 24, 0 doublon). Surchargeable par TRACKER_API_BASE.
+API_BASE = os.environ.get("TRACKER_API_BASE", "https://api.my-nft-tracker.com")
 NFTS_URL = f"{API_BASE}/api/Nfts"
 
 # IMPORTANT: the API misbehaves for large `limit` values (above ~24 it silently

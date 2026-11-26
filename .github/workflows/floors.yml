@@ -58,6 +58,12 @@ jobs:
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
           SHEET_ID: ${{ secrets.SHEET_ID }}
           FLOORS_MAX: ${{ github.event.inputs.max || '0' }}
-          FLOORS_FLOOR_SOURCE: ${{ github.event.inputs.floor_source || vars.FLOORS_FLOOR_SOURCE || 'self' }}
+          # ⛔ 26/11/2026 : la variable de depot vaut « bridge », mais le pont
+          # (jetonveve data/hprix_feed.csv) n'a plus rien ecrit depuis le
+          # 09/10/2026 -> floors collectibles figes. On FORCE « self » tant que
+          # le pont est en panne (aucune double ecriture possible : il est
+          # muet). REVENIR : remettre `|| vars.FLOORS_FLOOR_SOURCE` une fois le
+          # pont repare (voir REPRISE.md du projet Scrapeur).
+          FLOORS_FLOOR_SOURCE: ${{ github.event.inputs.floor_source || 'self' }}
           APIFY_PROXY_PASSWORD: ${{ secrets.APIFY_PROXY_PASSWORD }}
         run: python -m scraper.floors
