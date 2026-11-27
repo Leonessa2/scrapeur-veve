@@ -200,6 +200,14 @@ def _periode_couverte(d: Optional[dt.date], premier: dt.date, sans_trou: bool,
     return "couverte"
 
 
+def garder_tracker(valeur: Optional[float], periode: str) -> bool:
+    """Decision de Preda (27/11) : hors periode couverte (avant notre 1re donnee,
+    trou des comics, date future ou absente), on garde la valeur du tracker,
+    a condition qu'elle soit entre 1 $ et 15 000 $ ; sinon notre valeur."""
+    return (periode != "couverte" and valeur is not None
+            and PLANCHER <= valeur <= PLAFOND)
+
+
 def _une_fiche(p, sortie, collecte, methode):
     jours = floors_du_jour(p, sortie, collecte, methode)
     return appliquer(jours)
@@ -273,6 +281,24 @@ def comparer(prix: str, catalogue: str, collecte: dt.date, sortie_csv: str = "",
                 n[f"{m}.ath_ou_atl_change"] += 1
                 change_une = True
             ligne += [ath, athd, atl, atld, s_]
+            if m == "plus_long":
+                fin_ch = False
+                for k in ("ath", "atl"):
+                    a, ad = act[k]
+                    per = _periode_couverte(ad, premier, sans_trou, collecte)
+                    if garder_tracker(a, per):
+                        n[f"final.{k}_tracker_garde"] += 1
+                        v, vd = a, ad
+                    else:
+                        if per != "couverte" and a is not None:
+                            n[f"final.{k}_tracker_hors_seuils_remplace"] += 1
+                        v, vd = regle[k]
+                    if dif(v, a):
+                        n[f"final.{k}_change"] += 1; fin_ch = True
+                    elif vd and ad and vd != ad:
+                        n[f"final.{k}_date_seule_change"] += 1
+                if fin_ch:
+                    n["final.ath_ou_atl_change"] += 1
         if change_une and len(ech) < 2000:
             ech.append(ligne)
     if sortie_csv:

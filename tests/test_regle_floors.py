@@ -87,3 +87,13 @@ def test_periode_couverte():
     assert c(D(2026, 10, 15), D(2022, 1, 1), False, D(2026, 11, 27)) == "non_couverte_trou_comics"
     assert c(D(2026, 10, 15), D(2022, 1, 1), True, D(2026, 11, 27)) == "couverte"
     assert c(None, D(2022, 1, 1), True, D(2026, 11, 27)) == "date_inconnue"
+
+
+def test_garder_tracker_seuils():
+    g = R.garder_tracker
+    assert g(500.0, "non_couverte_avant_premiere_donnee")
+    assert g(500.0, "date_inconnue")
+    assert not g(500.0, "couverte")
+    assert not g(0.5, "non_couverte_trou_comics")
+    assert not g(20000.0, "non_couverte_date_future")
+    assert not g(None, "date_inconnue")
