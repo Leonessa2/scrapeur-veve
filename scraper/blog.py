@@ -520,6 +520,12 @@ def sync_blog(articles: List[Dict[str, Any]], spreadsheet_id: str) -> Dict[str, 
             old = merged[sid]
             rec = {**old, **{k: v for k, v in art.items() if v not in (None, "")}}
             rec["first_seen"] = old.get("first_seen") or now
+            # ⭐ CONTRAT.md (27/11/2026) : `url` = l'adresse d'origine, ecrite une
+            #    fois et jamais changee. VeVe France s'en sert pour reperer les
+            #    articles deja adaptes ; si VeVe deplace un article, on garde la
+            #    premiere adresse (mesure du 27/11 : aucun cas sur 1 617).
+            if str(old.get("url", "")).strip():
+                rec["url"] = old["url"]
             rec["last_seen"] = now
             merged[sid] = rec
             updated += 1

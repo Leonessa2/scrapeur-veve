@@ -21,6 +21,9 @@ def main() -> int:
     p = lambda k, v: print(f"[blog] {k} = {v}")
     p("entete", " | ".join(entete))
     p("lignes", len(lignes))
+    for r in lignes[:2] + lignes[-2:]:
+        p("exemple", f"{r.get('date')!r} | {r.get('first_seen')!r} | {r.get('url')}")
+    p("dates_brutes_types", dict(Counter(type(r.get('date')).__name__ for r in lignes)))
     src = Counter(); cat = Counter(); hote = Counter()
     vide = Counter(); urls = Counter(); slugs = Counter(); hach = Counter()
     tronque = 0; url_slug_diff = 0; dates_ko = 0; longueurs = []
@@ -36,7 +39,7 @@ def main() -> int:
             if source(s) == "veve.me" and u.rstrip("/").rsplit("/", 1)[-1] != s:
                 url_slug_diff += 1
         slugs[s] += 1
-        if not re.match(r"^\d{4}-\d{2}-\d{2}$", str(r.get("date", "")).strip()):
+        if not re.match(r"^\d{4}-\d{2}-\d{2}$", blog._date_iso(r.get("date"))):
             dates_ko += 1
         if c:
             longueurs.append(len(c))
