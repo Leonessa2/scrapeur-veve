@@ -1,0 +1,32 @@
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : .github/workflows/sonde-blog.yml
+#
+# 📐 SONDE SANS ECRITURE (27/11/2026) : decrit l'onglet 📝C-BLOG pour CONTRAT.md
+# (VeVe France, lot 6). Lit l'onglet, compte. ⛔ N'ecrit rien, ne poste rien.
+name: Sonde onglet C-BLOG (lecture seule)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: veve-blog-lecture
+  cancel-in-progress: false
+
+jobs:
+  lire:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install -r requirements.txt
+      - name: Lire 📝C-BLOG et compter
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+        run: python -m scraper.sonde_blog
