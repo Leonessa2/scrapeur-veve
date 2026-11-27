@@ -944,6 +944,10 @@ lot_s:
     fichier: ledger-writer.yml
     jusqu_au: "2026-12-31"
     raison: "consequence d'analytics.yml (garde-fou des 7 jours, voulu)"
+  - depot: Leonessa2/jetonveve
+    fichier: essai-filet.yml
+    jusqu_au: "2099-12-31"
+    raison: "echec volontaire, lance a la main pour tester le filet"
 
   # D. Cadence.
   cadence:
