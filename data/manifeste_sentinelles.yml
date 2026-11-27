@@ -873,3 +873,98 @@ workflows:
   valide_fenetre: false
   preuve: run
   pourquoi_preuve: 'ne committe QUE s''il y a un diff : sans changement il ne laisse AUCUNE trace d''ecriture, et un sain passerait pour mort'
+
+# ═══════════════════════════════════════════════════════════════════════════
+# LOT S (27/11/2026) — lu par scraper/sentinelle_lot_s.py
+#
+# 🔴 Lecon du 09/10/2026 : l'ancien PREDA_TOKEN a expire ; la chaine du grand
+# livre est restee figee six semaines (transfers-full 06/10, analytics-derived
+# 14/10, ledger-data 16/10) avec des runs rouges que personne n'a vus et des
+# runs verts qui ne deposaient rien. Ici on regarde la DATE DES FICHIERS, les
+# ECHECS de tous les workflows, la CADENCE de floor-watch et l'EXPIRATION des
+# jetons.
+# ═══════════════════════════════════════════════════════════════════════════
+lot_s:
+  depots: [Leonessa2/scrapeur-veve, Leonessa2/jetonveve]
+
+  # A. Age du FICHIER (pas du run). max_age_j en jours.
+  fraicheur:
+  - release: analytics-derived
+    depot: Leonessa2/jetonveve
+    asset: ledger_full.csv.gz
+    max_age_j: 7
+    critique: true
+    sens: "Le ledger writer refuse d'ecrire au-dela de 7 jours (MAX_AGE_DAYS, ne pas assouplir) ; whales.csv et ledger_full.csv.gz des sites restent figes."
+  - release: transfers-full
+    depot: Leonessa2/jetonveve
+    asset: transfers_full.csv.gz
+    max_age_j: 10
+    critique: true
+    sens: "analytics.yml refuse une source de plus de 10 jours."
+  - release: ledger-data
+    depot: Leonessa2/scrapeur-veve
+    asset: wallet_profiles.csv.gz
+    max_age_j: 8
+    critique: true
+    sens: "Grand livre et profils wallets publies par le ledger writer (hebdomadaire)."
+  - release: chain-archive-daily
+    depot: Leonessa2/scrapeur-veve
+    asset: "*"
+    max_age_j: 2
+    critique: true
+    sens: "Transferts quotidiens CollectChain : sans eux, la fusion des transferts est incomplete."
+  - release: catalogue
+    depot: Leonessa2/jetonveve
+    asset: catalogue.csv.gz
+    max_age_j: 2
+    critique: true
+    sens: "Catalogue lu par veveprice et vevewiki."
+  - release: prices-full
+    depot: Leonessa2/jetonveve
+    asset: prices.csv.gz
+    max_age_j: 2
+    critique: true
+    sens: "Historique des prix lu par les deux sites."
+  - release: etat-floor-watch
+    depot: Leonessa2/jetonveve
+    asset: floor_state.json
+    max_age_j: 0.25
+    critique: true
+    rapide: true
+    sens: "Etat de floor-watch : au-dela de 6 h, les alertes sous-floor sont arretees."
+
+  # B. Echecs de TOUS les workflows des depots, sur cette fenetre (heures).
+  echecs_fenetre_h: 26
+  echecs_attendus:
+  - depot: Leonessa2/jetonveve
+    fichier: analytics.yml
+    jusqu_au: "2026-12-31"
+    raison: "source transfers-full trop vieille tant que la chaine des transferts n'est pas reparee (Fusion transferts desactivee par Preda le 27/11)"
+  - depot: Leonessa2/scrapeur-veve
+    fichier: ledger-writer.yml
+    jusqu_au: "2026-12-31"
+    raison: "consequence d'analytics.yml (garde-fou des 7 jours, voulu)"
+
+  # D. Cadence.
+  cadence:
+  - depot: Leonessa2/jetonveve
+    fichier: floor-watch.yml
+    min_24h: 12
+    silence_max_h: 6
+    sens: "Verifier le pinger cron-job.org (projet Serveur & domaines) : sans lui, ~3,6 passages par jour."
+
+  # E. Jetons. Ceux passes en secret au workflow sont verifies EN DIRECT
+  #    (JETON_A_VERIFIER_<NOM> dans sentinelle.yml). Ceux ranges ailleurs sont
+  #    declares ici, avec leur date d'expiration NOTEE A LA MAIN.
+  preavis_jetons_j: 14
+  jetons_declares:
+  - nom: PINGER_FLOORWATCH
+    range: cron-job.org (tache 8139600)
+    expire_le: "2027-11-25"   # approximatif (cree le 26/11/2026, 1 an) : date exacte a noter par Preda
+    sert_a: "pinger de floor-watch toutes les 30 min"
+  # ⓘ DEV_SCRAPEUR n'est PAS liste : decision de Preda (27/11/2026) — un seul
+  #   jeton a acces complet, SANS expiration, voulu. Rien a surveiller sur sa date.
+
+  # F. Dates ATH/ATL dans le futur pour une fiche deja sortie.
+  dates_futures:
+    url: https://github.com/Leonessa2/jetonveve/releases/download/catalogue/catalogue.csv.gz

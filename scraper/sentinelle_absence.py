@@ -87,6 +87,8 @@ from datetime import datetime, timedelta, timezone
 
 import yaml
 
+from scraper import sentinelle_lot_s as L
+
 API = "https://api.github.com"
 
 # ⚠️ QUI POSSEDE QUOI. Ce n'est PAS devinable depuis le manifeste, et une erreur
@@ -405,18 +407,57 @@ def rapport(constats: dict, manifeste: list, non_validees: int) -> tuple[str, bo
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-def poster(msg: str, hook: str) -> None:
+def _blocs(msg: str, taille: int = 1900) -> list:
+    """Coupe aux fins de ligne (Discord refuse plus de 2000 caracteres)."""
+    out, cur = [], ""
+    for ligne in msg.split("\n"):
+        while len(ligne) > taille:
+            if cur:
+                out.append(cur)
+                cur = ""
+            out.append(ligne[:taille])
+            ligne = ligne[taille:]
+        if len(cur) + len(ligne) + 1 > taille:
+            out.append(cur)
+            cur = ligne
+        else:
+            cur = f"{cur}\n{ligne}" if cur else ligne
+    if cur:
+        out.append(cur)
+    return out
+
+
+# 🔴🔴🔴 LOT S (27/11/2026) — LE BATTEMENT N'ARRIVAIT PAS.
+# `urllib` envoie l'en-tete « Python-urllib/3.x » : Cloudflare, devant Discord,
+# le bannit (403, « error code: 1010 »). L'erreur etait AVALEE par un print, le
+# run restait vert : la sentinelle se croyait entendue et ne l'etait pas.
+# ⭐⭐⭐ UN MESSAGE QUI N'ARRIVE PAS EST UNE PANNE DE LA SENTINELLE : on rend
+#   False, `main` sort en erreur, et l'etape de secours (curl) du workflow
+#   previent que la sentinelle est muette.
+UA_DISCORD = "DiscordBot (https://github.com/Leonessa2/scrapeur-veve, 1.0)"
+
+
+def poster(msg: str, hook: str) -> bool:
     if not hook:
         print("⚠️ DISCORD_ALERTE_TECH_WEBHOOK absent — rien n'est poste.")
-        return
-    for bloc in [msg[i:i + 1900] for i in range(0, len(msg), 1900)]:
+        return False
+    tout_ok = True
+    for bloc in _blocs(msg):
         req = urllib.request.Request(
-            hook, data=json.dumps({"content": bloc}).encode(),
-            headers={"Content-Type": "application/json"})
+            hook + ("&" if "?" in hook else "?") + "wait=true",
+            data=json.dumps({"content": bloc, "username": "Sentinelle"}).encode(),
+            headers={"Content-Type": "application/json", "User-Agent": UA_DISCORD})
         try:
-            urllib.request.urlopen(req, timeout=20).read()
+            with urllib.request.urlopen(req, timeout=20) as r:
+                print(f"✅ Discord : HTTP {r.status}")
+        except urllib.error.HTTPError as e:
+            corps = e.read()[:200].decode("utf-8", "replace")
+            print(f"⛔ Envoi Discord refuse : HTTP {e.code} — {corps}")
+            tout_ok = False
         except Exception as e:
-            print(f"⚠️ Envoi Discord en echec : {e}")
+            print(f"⛔ Envoi Discord en echec : {type(e).__name__}")
+            tout_ok = False
+    return tout_ok
 
 
 def main(argv=None) -> int:
@@ -424,9 +465,13 @@ def main(argv=None) -> int:
     p.add_argument("--manifeste", default="data/manifeste_sentinelles.yml")
     p.add_argument("--a-blanc", action="store_true",
                    help="calcule et affiche, ne poste rien")
+    p.add_argument("--rapide", action="store_true",
+                   help="veille courte (toutes les 3 h) : ne poste que s'il y a un probleme")
     a = p.parse_args(argv)
+    hook = os.environ.get("DISCORD_ALERTE_TECH_WEBHOOK", "")
 
-    manifeste = yaml.safe_load(open(a.manifeste, encoding="utf-8"))["workflows"]
+    doc = yaml.safe_load(open(a.manifeste, encoding="utf-8"))
+    manifeste = doc["workflows"]
     surveilles = [e for e in manifeste
                   if e.get("cadence") != "manuel" and e.get("fenetre_h")]
     non_validees = sum(1 for e in surveilles if e.get("valide_fenetre") is False)
@@ -446,8 +491,22 @@ def main(argv=None) -> int:
                "Elle n'a rien pu lire — ⛔ ne pas confondre avec « tout va bien ».")
         print(msg)
         if not a.a_blanc:
-            poster(msg, os.environ.get("DISCORD_ALERTE_TECH_WEBHOOK", ""))
+            poster(msg, hook)
         return 1
+
+    # ── Lot S (27/11/2026) : fraicheur, echecs, etats, cadence, jetons, dates ──
+    # ⭐ Les jetons a verifier arrivent en `JETON_A_VERIFIER_<NOM>` : le workflow
+    #   decide lesquels, ce module ne connait aucun secret par son nom.
+    presents = {k[len("JETON_A_VERIFIER_"):]: v for k, v in os.environ.items()
+                if k.startswith("JETON_A_VERIFIER_")}
+    src_s = L.SourceLotS(jetons["Leonessa2"] or jetons["*"])
+    msg_s, alarme_s = L.executer(doc.get("lot_s") or {}, src_s, presents, rapide=a.rapide)
+
+    if a.rapide:
+        print(msg_s)
+        if alarme_s and not a.a_blanc:
+            return 0 if poster("🛰️ **Veille rapide — probleme vu**\n" + msg_s, hook) else 3
+        return 0
 
     src = Source(jetons)
     constats = {}
@@ -456,9 +515,14 @@ def main(argv=None) -> int:
         constats[c.cle] = c
 
     msg, alarme = rapport(constats, manifeste, non_validees)
+    if alarme_s and not alarme:
+        msg = msg.replace("🟢 **Sentinelle — RAS.**", "🟡 **Sentinelle — workflows RAS, mais :**", 1)
+    msg = msg + "\n\n" + msg_s
     print(msg)
-    if not a.a_blanc:
-        poster(msg, os.environ.get("DISCORD_ALERTE_TECH_WEBHOOK", ""))
+    if not a.a_blanc and not poster(msg, hook):
+        # ⛔ Message non livre = sentinelle muette : run ROUGE, l'etape de
+        #   secours (curl) du workflow le dit dans le salon.
+        return 3
     # ⭐ On sort 0 meme en alarme : une alerte n'est pas un echec de la
     #   sentinelle, et un run rouge ici ferait croire que c'est ELLE qui casse.
     return 0
