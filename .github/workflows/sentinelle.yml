@@ -23,10 +23,19 @@ name: Sentinelle d'absence
 on:
   schedule:
     - cron: "20 12 * * *"
+    # ⏱️ LOT S (27/11/2026) : VEILLE RAPIDE toutes les 3 h (cadence de
+    # floor-watch, jetons refuses, etat de floor-watch). Elle ne poste QUE s'il
+    # y a un probleme. ⚠️ GitHub saute ou retarde des passages planifies : ce
+    # n'est pas une garantie a l'heure pres, c'est un filet de plus.
+    - cron: "47 */3 * * *"
   workflow_dispatch:
     inputs:
       a_blanc:
         description: "Calculer et afficher SANS rien poster (oui/non)"
+        required: false
+        default: "non"
+      rapide:
+        description: "Veille rapide seulement (oui/non)"
         required: false
         default: "non"
 
@@ -68,9 +77,22 @@ jobs:
           SENTINELLE_TOKEN_VEVEPREDA: ${{ secrets.SENTINELLE_TOKEN_VEVEPREDA }}
           SENTINELLE_TOKEN: ${{ secrets.SENTINELLE_TOKEN }}
           DISCORD_ALERTE_TECH_WEBHOOK: ${{ secrets.DISCORD_ALERTE_TECH_WEBHOOK }}
+          # 🔑 LOT S : jetons verifies EN DIRECT (accepte ? date d'expiration ?).
+          #    Le prefixe JETON_A_VERIFIER_ est lu par scraper/sentinelle_lot_s.
+          #    ⛔ Leur valeur n'est jamais affichee : seul un appel a l'API
+          #    GitHub est fait avec, pour lire l'entete d'expiration.
+          JETON_A_VERIFIER_PREDA_TOKEN: ${{ secrets.PREDA_TOKEN }}
+          JETON_A_VERIFIER_JETONVEVE_TOKEN: ${{ secrets.JETONVEVE_TOKEN }}
+          JETON_A_VERIFIER_SENTINELLE_TOKEN_VEVEPREDA: ${{ secrets.SENTINELLE_TOKEN_VEVEPREDA }}
+          PLANIF: ${{ github.event.schedule }}
+          A_BLANC: ${{ github.event.inputs.a_blanc }}
+          RAPIDE: ${{ github.event.inputs.rapide }}
         run: |
           ARGS=""
-          [ "${{ github.event.inputs.a_blanc }}" = "oui" ] && ARGS="--a-blanc"
+          [ "$A_BLANC" = "oui" ] && ARGS="--a-blanc"
+          if [ "$RAPIDE" = "oui" ] || [ "$PLANIF" = "47 */3 * * *" ]; then
+            ARGS="$ARGS --rapide"
+          fi
           python -m scraper.sentinelle_absence $ARGS
 
       # 🔴 LA SENTINELLE SE SURVEILLE ELLE-MEME. Si ELLE tombe, personne ne
@@ -85,7 +107,7 @@ jobs:
             exit 0
           fi
           URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
-          MSG="⚫ **LA SENTINELLE ELLE-MEME A ECHOUE** — a partir de maintenant, l'absence d'alerte NE VEUT PLUS DIRE que tout va bien.\\nCause la plus frequente : \`SENTINELLE_TOKEN\` absent ou expire.\\n${URL}"
+          MSG="⚫ **LA SENTINELLE ELLE-MEME A ECHOUE** — a partir de maintenant, l'absence d'alerte NE VEUT PLUS DIRE que tout va bien.\\nCauses possibles : message refuse par Discord (le rapport n'est PAS arrive), ou \`SENTINELLE_TOKEN_VEVEPREDA\` absent ou expire.\\n${URL}"
           curl -s -H "Content-Type: application/json" \
                -d "{\"content\": \"${MSG}\"}" "$HOOK" >/dev/null \
             && echo "✅ Alerte envoyee." || echo "⚠️ Envoi de l'alerte en echec."

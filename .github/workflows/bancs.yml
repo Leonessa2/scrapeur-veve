@@ -35,10 +35,16 @@ on:
     paths:
       - ".github/workflows/**"
       - "tests/test_filet_alerte.py"
+      - "tests/test_sentinelle*.py"
+      - "scraper/sentinelle_*.py"
+      - "data/manifeste_sentinelles.yml"
   pull_request:
     paths:
       - ".github/workflows/**"
       - "tests/test_filet_alerte.py"
+      - "tests/test_sentinelle*.py"
+      - "scraper/sentinelle_*.py"
+      - "data/manifeste_sentinelles.yml"
   workflow_dispatch:
 
 permissions:
@@ -64,3 +70,8 @@ jobs:
 
       - name: "Aucun workflow ne doit tomber en silence"
         run: python -m pytest tests/test_filet_alerte.py -v
+
+      # 🛰️ LOT S (27/11/2026) : la sentinelle (battement, fraicheur, echecs,
+      #    cadence, jetons, dates) — zero reseau, yaml seulement.
+      - name: "La sentinelle se teste avant de surveiller"
+        run: python -m pytest tests/test_sentinelle_absence.py tests/test_sentinelle_lot_s.py -v
