@@ -58,3 +58,32 @@ def test_sans_historique_seuls_1_et_15000():
 
 def test_virgule_et_point():
     assert R.nombre("1,95") == 1.95 and R.nombre("15 000") == 15000.0 and R.nombre("") is None
+
+
+def test_plus_long_tenu_contre_mediane_a_deux_releves():
+    """2 releves (10 a minuit, 30 a 23 h) : la mediane invente 20 ; le floor tenu
+    le plus longtemps est 10 (23 h contre 1 h)."""
+    p = [(t(1, 0), 10.0), (t(2, 23), 30.0)]
+    med = dict(R.floors_du_jour(p, None, D(2026, 11, 2), "mediane"))
+    lon = dict(R.floors_du_jour(p, None, D(2026, 11, 2), "plus_long"))
+    assert med[D(2026, 11, 2)] == 20.0 and lon[D(2026, 11, 2)] == 10.0
+
+
+def test_plus_long_offre_d_une_minute_ne_pese_rien():
+    p = [(t(1, 0), 50.0), (dt.datetime(2026, 11, 2, 10, 0), 5.0), (dt.datetime(2026, 11, 2, 10, 1), 50.0)]
+    lon = dict(R.floors_du_jour(p, None, D(2026, 11, 2), "plus_long"))
+    assert lon[D(2026, 11, 2)] == 50.0
+
+
+def test_plus_long_pas_d_offre_toute_la_journee_case_vide():
+    p = [(t(1, 0), 50.0), (dt.datetime(2026, 11, 2, 1, 0), 0.0)]
+    lon = dict(R.floors_du_jour(p, None, D(2026, 11, 2), "plus_long"))
+    assert lon[D(2026, 11, 2)] is None
+
+
+def test_periode_couverte():
+    c = R._periode_couverte
+    assert c(D(2021, 1, 1), D(2022, 1, 1), True, D(2026, 11, 27)) == "non_couverte"
+    assert c(D(2026, 10, 15), D(2022, 1, 1), False, D(2026, 11, 27)) == "non_couverte"
+    assert c(D(2026, 10, 15), D(2022, 1, 1), True, D(2026, 11, 27)) == "couverte"
+    assert c(None, D(2022, 1, 1), True, D(2026, 11, 27)) == "date_inconnue"

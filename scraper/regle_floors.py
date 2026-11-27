@@ -69,8 +69,34 @@ def date_libre(s) -> Optional[dt.date]:
     return None
 
 
+def _plus_long(en_vigueur_connu: bool, en_vigueur, du_jour, j: dt.date):
+    """Floor TENU LE PLUS LONGTEMPS dans la journee (proposition du 27/11, pas
+    encore acceptee) : chaque valeur pese la duree pendant laquelle elle a ete
+    le floor (de minuit ou de son arrivee jusqu'au changement suivant ou
+    minuit). « Pas d'offre » est une valeur comme une autre : si elle a dure le
+    plus, la case est vide. Egalite : la valeur en place a la fin du jour."""
+    debut_j = dt.datetime.combine(j, dt.time())
+    fin_j = debut_j + dt.timedelta(days=1)
+    segs = []                       # (valeur, debut)
+    if en_vigueur_connu:
+        segs.append((en_vigueur, debut_j))
+    segs += [(v, ts) for ts, v in du_jour]
+    if not segs:
+        return None
+    duree: Dict[object, float] = defaultdict(float)
+    ordre: Dict[object, int] = {}
+    for k, (v, t0) in enumerate(segs):
+        t1 = segs[k + 1][1] if k + 1 < len(segs) else fin_j
+        cle = v if (v is not None and v > 0) else None
+        duree[cle] += max((t1 - t0).total_seconds(), 0.0)
+        ordre[cle] = k
+    gagnant = max(duree, key=lambda c: (duree[c], ordre[c]))
+    return gagnant
+
+
 def floors_du_jour(points: List[Tuple[dt.datetime, Optional[float]]],
-                   sortie: Optional[dt.date], collecte: dt.date) -> List[Tuple[dt.date, Optional[float]]]:
+                   sortie: Optional[dt.date], collecte: dt.date,
+                   methode: str = "mediane") -> List[Tuple[dt.date, Optional[float]]]:
     """points : (horodatage UTC, floor) TRIES. Rend [(jour, floor du jour ou None)]
     du premier jour autorise (1er point, ou la sortie si plus tard) jusqu'a la
     date de collecte incluse."""
@@ -89,13 +115,16 @@ def floors_du_jour(points: List[Tuple[dt.datetime, Optional[float]]],
     while j <= collecte:
         du_jour = []
         while i < n and points[i][0].date() == j:
-            du_jour.append(points[i][1])
+            du_jour.append(points[i])
             i += 1
-        releves = ([en_vigueur] if connu else []) + du_jour
-        valides = [v for v in releves if v is not None and v > 0]
-        out.append((j, statistics.median(valides) if valides else None))
+        if methode == "plus_long":
+            out.append((j, _plus_long(connu, en_vigueur, du_jour, j)))
+        else:
+            releves = ([en_vigueur] if connu else []) + [v for _, v in du_jour]
+            valides = [v for v in releves if v is not None and v > 0]
+            out.append((j, statistics.median(valides) if valides else None))
         if du_jour:
-            connu, en_vigueur = True, du_jour[-1]
+            connu, en_vigueur = True, du_jour[-1][1]
         j += dt.timedelta(days=1)
     return out
 
@@ -152,87 +181,111 @@ def lire_points(chemin: str) -> Dict[str, List[Tuple[dt.datetime, Optional[float
     return pts
 
 
-def comparer(prix: str, catalogue: str, collecte: dt.date, sortie_csv: str = "") -> dict:
+TROU_DEBUT, TROU_FIN = dt.date(2026, 9, 30), dt.date(2026, 11, 25)
+
+
+def _periode_couverte(d: Optional[dt.date], premier: dt.date, sans_trou: bool,
+                      collecte: dt.date) -> str:
+    """La date d'un ATH/ATL « venu du tracker » tombe-t-elle dans une periode que
+    NOTRE historique couvre ? Sinon, le remplacer donnerait un faux ATH plus bas
+    (ou un faux ATL plus haut) : on ne sait pas ce qui s'est passe la."""
+    if d is None:
+        return "date_inconnue"
+    if d < premier:
+        return "non_couverte"            # avant notre premiere donnee
+    if d > collecte:
+        return "non_couverte"            # date dans le futur (pas encore sortie)
+    if not sans_trou and TROU_DEBUT <= d <= TROU_FIN:
+        return "non_couverte"            # trou du 30/09 au 25/11 non comble (faux trait droit)
+    return "couverte"
+
+
+def _une_fiche(p, sortie, collecte, methode):
+    jours = floors_du_jour(p, sortie, collecte, methode)
+    return appliquer(jours)
+
+
+def comparer(prix: str, catalogue: str, collecte: dt.date, sortie_csv: str = "",
+             methodes=("mediane", "plus_long")) -> dict:
     pts = lire_points(prix)
     with gzip.open(catalogue, "rt", encoding="utf-8") as f:
         cat = list(csv.DictReader(f))
     cle = "uuid" if cat and "uuid" in cat[0] else "veve_uuid"
-    n = {"fiches_catalogue": len(cat), "fiches_avec_points": 0, "jours": 0,
-         "jours_suspects": 0, "fiches_avec_suspect": 0, "jours_avant_sortie_retires": 0,
-         "ath_change": 0, "atl_change": 0, "ath_ou_atl_change": 0,
-         "ath_date_change": 0, "atl_date_change": 0, "ath_vide": 0, "atl_vide": 0,
-         "ath_cat_vide": 0, "atl_cat_vide": 0}
+    n: Dict[str, int] = defaultdict(int)
+    n["fiches_catalogue"] = len(cat)
+    dif = lambda a, b: (a is None) != (b is None) or (
+        a is not None and b is not None and abs(a - b) > max(0.01, 0.005 * max(a, b)))
     ech = []
     for r in cat:
         u = (r.get(cle) or "").strip().lower()
         p = pts.get(u)
-        sortie = date_libre(r.get("release_date"))
-        a_ath, a_atl = nombre(r.get("ath")), nombre(r.get("atl"))
-        if not a_ath:
-            n["ath_cat_vide"] += 1
-        if not a_atl:
-            n["atl_cat_vide"] += 1
         if not p:
             continue
         n["fiches_avec_points"] += 1
-        if sortie:
-            n["jours_avant_sortie_retires"] += len({t.date() for t, _ in p if t.date() < sortie})
-        jours = floors_du_jour(p, sortie, collecte)
-        marques, ath, athd, atl, atld = appliquer(jours)
-        n["jours"] += sum(1 for _, f, _ in marques if f is not None)
-        s = sum(1 for _, _, x in marques if x)
-        n["jours_suspects"] += s
-        n["fiches_avec_suspect"] += 1 if s else 0
-        n["ath_vide"] += 0 if ath else 1
-        n["atl_vide"] += 0 if atl else 1
-        dif = lambda a, b: (a is None) != (b is None) or (a is not None and b is not None and abs(a - b) > max(0.01, 0.005 * max(a, b)))
-        ca, cl = dif(ath, a_ath or None), dif(atl, a_atl or None)
-        n["ath_change"] += ca
-        n["atl_change"] += cl
-        n["ath_ou_atl_change"] += 1 if (ca or cl) else 0
-        if not ca and athd and date_libre(r.get("ath_date")) and athd != date_libre(r.get("ath_date")):
-            n["ath_date_change"] += 1
-        if not cl and atld and date_libre(r.get("atl_date")) and atld != date_libre(r.get("atl_date")):
-            n["atl_date_change"] += 1
-        # ⭐ decomposition : ampleur de l'ecart, et cause (sans le filtre des
-        #   suspects, que donnerait la seule mediane du jour ?)
-        brut = [f for _, f, _ in marques if f is not None]
-        b_ath, b_atl = (max(brut), min(brut)) if brut else (None, None)
+        sortie = date_libre(r.get("release_date"))
+        premier = p[0][0].date()
+        avant = any(t.date() < TROU_DEBUT for t, _ in p)
+        dedans = any(TROU_DEBUT <= t.date() <= TROU_FIN for t, _ in p)
+        sans_trou = dedans or not avant          # combles, ou nees apres le trou
+        n["fiches_trou_non_comble"] += 0 if sans_trou else 1
+        act = {"ath": (nombre(r.get("ath")) or None, date_libre(r.get("ath_date"))),
+               "atl": (nombre(r.get("atl")) or None, date_libre(r.get("atl_date")))}
         pts_ok = [f for tt, f in p if f and f > 0 and (not sortie or tt.date() >= sortie)]
-        p_ath, p_atl = (max(pts_ok), min(pts_ok)) if pts_ok else (None, None)
-        for nom_, act, regle, med_seule, point_brut in (("ath", a_ath or None, ath, b_ath, p_ath),
-                                                        ("atl", a_atl or None, atl, b_atl, p_atl)):
-            if not dif(regle, act):
-                continue
-            if act is None or regle is None:
-                classe = "vide"
-            else:
-                e = abs(regle - act) / max(act, regle)
-                classe = "<=5%" if e <= 0.05 else "5-50%" if e <= 0.5 else ">50%"
-            if dif(regle, med_seule):
-                cause = "filtre_suspects"            # la mediane seule donnait autre chose
-            elif not dif(act, point_brut):
-                cause = "mediane_du_jour"            # l'actuel = un releve isole de l'historique
-            else:
-                cause = "source_differente"          # l'actuel n'est pas dans notre historique
-            n[f"{nom_}_{classe}"] = n.get(f"{nom_}_{classe}", 0) + 1
-            n[f"{nom_}_cause_{cause}"] = n.get(f"{nom_}_cause_{cause}", 0) + 1
-        if (ca or cl):
-            ech.append([u, r.get("name", ""), a_ath, r.get("ath_date"), ath, athd, a_atl,
-                        r.get("atl_date"), atl, atld, s, b_ath, b_atl])
+        brut_pt = {"ath": max(pts_ok) if pts_ok else None, "atl": min(pts_ok) if pts_ok else None}
+        ligne = [u, r.get("name", ""), act["ath"][0], r.get("ath_date"), act["atl"][0], r.get("atl_date")]
+        change_une = False
+        for m in methodes:
+            marques, ath, athd, atl, atld = _une_fiche(p, sortie, collecte, m)
+            s_ = sum(1 for _, _, x in marques if x)
+            n[f"{m}.jours"] += sum(1 for _, f, _ in marques if f is not None)
+            n[f"{m}.jours_suspects"] += s_
+            n[f"{m}.fiches_avec_suspect"] += 1 if s_ else 0
+            brut = [f for _, f, _ in marques if f is not None]
+            med = {"ath": max(brut) if brut else None, "atl": min(brut) if brut else None}
+            regle = {"ath": (ath, athd), "atl": (atl, atld)}
+            ch = {}
+            for k in ("ath", "atl"):
+                a, ad = act[k]
+                v, vd = regle[k]
+                ch[k] = dif(v, a)
+                if not ch[k]:
+                    if vd and ad and vd != ad:
+                        n[f"{m}.{k}_date_seule_change"] += 1
+                    continue
+                n[f"{m}.{k}_change"] += 1
+                if a is None or v is None:
+                    classe = "vide"
+                else:
+                    e = abs(v - a) / max(a, v)
+                    classe = "<=5%" if e <= 0.05 else "5-50%" if e <= 0.5 else ">50%"
+                n[f"{m}.{k}_ecart_{classe}"] += 1
+                if dif(v, med[k]):
+                    cause = "filtre_suspects"
+                elif not dif(a, brut_pt[k]):
+                    cause = "floor_du_jour"
+                else:
+                    cause = "tracker_" + _periode_couverte(ad, premier, sans_trou, collecte)
+                n[f"{m}.{k}_cause_{cause}"] += 1
+            if ch["ath"] or ch["atl"]:
+                n[f"{m}.ath_ou_atl_change"] += 1
+                change_une = True
+            ligne += [ath, athd, atl, atld, s_]
+        if change_une and len(ech) < 2000:
+            ech.append(ligne)
     if sortie_csv:
         with open(sortie_csv, "w", newline="", encoding="utf-8") as f:
             w = csv.writer(f)
-            w.writerow(["veve_uuid", "nom", "ath_actuel", "ath_date_actuelle", "ath_regle",
-                        "ath_date_regle", "atl_actuel", "atl_date_actuelle", "atl_regle",
-                        "atl_date_regle", "jours_suspects", "ath_mediane_seule", "atl_mediane_seule"])
+            entete = ["veve_uuid", "nom", "ath_actuel", "ath_date_actuelle", "atl_actuel", "atl_date_actuelle"]
+            for m in methodes:
+                entete += [f"ath_{m}", f"ath_date_{m}", f"atl_{m}", f"atl_date_{m}", f"jours_suspects_{m}"]
+            w.writerow(entete)
             w.writerows(ech)
-    return n
+    return dict(n)
 
 
 if __name__ == "__main__":
     prix, cat = sys.argv[1], sys.argv[2]
     coll = date_libre(sys.argv[3]) if len(sys.argv) > 3 else dt.date.today()
     res = comparer(prix, cat, coll, "exemples_changements.csv")
-    for k, v in res.items():
-        print(f"[regle] {k} = {v}")
+    for k in sorted(res):
+        print(f"[regle] {k} = {res[k]}")
