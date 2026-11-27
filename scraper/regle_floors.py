@@ -194,15 +194,38 @@ def comparer(prix: str, catalogue: str, collecte: dt.date, sortie_csv: str = "")
             n["ath_date_change"] += 1
         if not cl and atld and date_libre(r.get("atl_date")) and atld != date_libre(r.get("atl_date")):
             n["atl_date_change"] += 1
-        if (ca or cl) and len(ech) < 400:
+        # ⭐ decomposition : ampleur de l'ecart, et cause (sans le filtre des
+        #   suspects, que donnerait la seule mediane du jour ?)
+        brut = [f for _, f, _ in marques if f is not None]
+        b_ath, b_atl = (max(brut), min(brut)) if brut else (None, None)
+        pts_ok = [f for tt, f in p if f and f > 0 and (not sortie or tt.date() >= sortie)]
+        p_ath, p_atl = (max(pts_ok), min(pts_ok)) if pts_ok else (None, None)
+        for nom_, act, regle, med_seule, point_brut in (("ath", a_ath or None, ath, b_ath, p_ath),
+                                                        ("atl", a_atl or None, atl, b_atl, p_atl)):
+            if not dif(regle, act):
+                continue
+            if act is None or regle is None:
+                classe = "vide"
+            else:
+                e = abs(regle - act) / max(act, regle)
+                classe = "<=5%" if e <= 0.05 else "5-50%" if e <= 0.5 else ">50%"
+            if dif(regle, med_seule):
+                cause = "filtre_suspects"            # la mediane seule donnait autre chose
+            elif not dif(act, point_brut):
+                cause = "mediane_du_jour"            # l'actuel = un releve isole de l'historique
+            else:
+                cause = "source_differente"          # l'actuel n'est pas dans notre historique
+            n[f"{nom_}_{classe}"] = n.get(f"{nom_}_{classe}", 0) + 1
+            n[f"{nom_}_cause_{cause}"] = n.get(f"{nom_}_cause_{cause}", 0) + 1
+        if (ca or cl):
             ech.append([u, r.get("name", ""), a_ath, r.get("ath_date"), ath, athd, a_atl,
-                        r.get("atl_date"), atl, atld, s])
+                        r.get("atl_date"), atl, atld, s, b_ath, b_atl])
     if sortie_csv:
         with open(sortie_csv, "w", newline="", encoding="utf-8") as f:
             w = csv.writer(f)
             w.writerow(["veve_uuid", "nom", "ath_actuel", "ath_date_actuelle", "ath_regle",
                         "ath_date_regle", "atl_actuel", "atl_date_actuelle", "atl_regle",
-                        "atl_date_regle", "jours_suspects"])
+                        "atl_date_regle", "jours_suspects", "ath_mediane_seule", "atl_mediane_seule"])
             w.writerows(ech)
     return n
 
