@@ -52,3 +52,17 @@ def test_bloc_decale_et_bloc_reel_en_fin():
 def test_recouvrement_a_b_dedoublonne_et_trie():
     j = C.par_jour([rec(5, 1), rec(3, 0), rec(5, 1)])
     assert [(r["block"], r["log_index"]) for r in j["2026-11-20"]] == [(3, 0), (5, 1)]
+
+
+def test_curseur_none_envoye_vide_jamais_retire():
+    """27/11 : sans `internal_transaction_index`, l'API rend la meme page a l'infini."""
+    n = {"block_number": 38847, "internal_transaction_index": None, "items_count": 50}
+    assert C.params_suivants(n) == {"block_number": 38847, "internal_transaction_index": "",
+                                    "items_count": 50}
+
+
+def test_items_count_ne_prouve_pas_que_le_curseur_avance():
+    a = {"block_number": 38847, "transaction_index": 2, "items_count": 50}
+    b = dict(a, items_count=100)
+    assert C.curseur(a) == C.curseur(b)
+    assert C.curseur(a) != C.curseur(dict(a, block_number=37829))

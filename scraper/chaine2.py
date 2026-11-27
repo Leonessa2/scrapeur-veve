@@ -39,6 +39,7 @@ A. La fenetre de la migration (19/11 13:03:35 → 20/11 00:00 UTC) : impossible
 from __future__ import annotations
 
 import collections
+import concurrent.futures
 import csv
 import datetime as _dt
 import gzip
@@ -123,6 +124,17 @@ def bilan(jours: Dict[str, List[Dict[str, Any]]], ecartes: collections.Counter,
     }
 
 
+def params_suivants(nxt: Dict[str, Any]) -> Dict[str, Any]:
+    """Curseur -> parametres. ⛔ None s'envoie VIDE, jamais retire."""
+    return {k: ("" if v is None else v) for k, v in nxt.items()}
+
+
+def curseur(nxt: Dict[str, Any]) -> tuple:
+    """Ce qui doit AVANCER d'une page a l'autre (items_count avance toujours,
+    meme quand la page se repete : il ne prouve rien)."""
+    return tuple(sorted((k, str(v)) for k, v in nxt.items() if k != "items_count"))
+
+
 # ─────────────────────────────── reseau ─────────────────────────────────────
 def collecte_b(jusqu_a: _dt.datetime, s=None):
     """Plus recent -> plus ancien, jusqu'a FIN_MIGRATION. Ignore >= jusqu_a
@@ -172,7 +184,7 @@ def collecte_a(methodes_b: Iterable[str], s=None):
             "methods": ",".join(meth),
             "age_from": GENESE.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
             "age_to": FIN_MIGRATION.strftime("%Y-%m-%dT%H:%M:%S.000Z")}
-    params, hashes, pages = dict(base), {}, 0
+    params, hashes, pages, precedent = dict(base), {}, 0, None
     while True:
         d = cc._get(s, ADV_URL, params)
         for it in d.get("items") or []:
@@ -186,14 +198,27 @@ def collecte_a(methodes_b: Iterable[str], s=None):
         nxt = d.get("next_page_params")
         if not nxt or not d.get("items"):
             break
-        params = dict(base, **{k: v for k, v in nxt.items() if v is not None})
+        # ⛔⛔ PIEGE MESURE LE 27/11 (2 h perdues) : le curseur porte
+        #   `internal_transaction_index: None`. `requests` RETIRE les parametres
+        #   a None ; sans lui, l'API rend LA MEME PAGE a l'infini (seul
+        #   items_count avance). ⇒ None s'envoie VIDE, et le curseur doit
+        #   AVANCER d'une page a l'autre, sinon on s'arrete en erreur.
+        cle = curseur(nxt)
+        if cle == precedent:
+            raise RuntimeError(f"advanced-filters : le curseur n'avance plus ({nxt})")
+        precedent = cle
+        params = dict(base, **params_suivants(nxt))
+        if pages % 20 == 0:
+            print(f"  A : {pages} pages, {len(hashes)} transactions", flush=True)
         time.sleep(cc.PAUSE_BETWEEN_PAGES)
     print(f"A : {pages} pages, {len(hashes)} transactions, methodes {meth}", flush=True)
-    recs, ecartes = [], collections.Counter()
-    for i, (h, (ts_tx, meth_tx)) in enumerate(hashes.items(), 1):
+    def une_tx(entree):
+        h, (ts_tx, meth_tx) = entree
+        sess = cc._session()
+        out, ec = [], 0
         params = {"type": "ERC-721"}
         while True:
-            d = cc._get(s, TX_URL.format(h=h), params)
+            d = cc._get(sess, TX_URL.format(h=h), params)
             for it in d.get("items") or []:
                 tok = it.get("token") or {}
                 if (tok.get("address_hash") or tok.get("address") or "").lower() \
@@ -202,18 +227,26 @@ def collecte_a(methodes_b: Iterable[str], s=None):
                 it = dict(it, timestamp=it.get("timestamp") or ts_tx,
                           method=it.get("method") or meth_tx)
                 if est_migration(it):
-                    ecartes["A"] += 1
+                    ec += 1
                     continue
                 rec = cc._flatten(it)
                 if rec and GENESE <= rec["ts"] < FIN_MIGRATION:
-                    recs.append(rec)
+                    out.append(rec)
             nxt = d.get("next_page_params")
             if not nxt:
                 break
-            params = dict({"type": "ERC-721"}, **nxt)
-        if i % 500 == 0:
-            print(f"  A : {i}/{len(hashes)} transactions, {len(recs)} transferts", flush=True)
-        time.sleep(cc.PAUSE_BETWEEN_PAGES)
+            params = dict({"type": "ERC-721"}, **params_suivants(nxt))
+        return out, ec
+
+    recs, ecartes = [], collections.Counter()
+    # ⭐ 4 appels en parallele : ~2 500 transactions (mesure du 27/11), une a
+    #   une = ~20 min ; prudent pour un explorateur public.
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+        for i, (out, ec) in enumerate(pool.map(une_tx, hashes.items()), 1):
+            recs += out
+            ecartes["A"] += ec
+            if i % 250 == 0:
+                print(f"  A : {i}/{len(hashes)} transactions, {len(recs)} transferts", flush=True)
     print(f"A fini : {len(recs)} transferts, recreations ecartees {ecartes['A']}", flush=True)
     return recs, ecartes, meth
 
@@ -239,6 +272,12 @@ def main() -> int:
         .astimezone(_dt.timezone.utc).replace(tzinfo=None)
     print(f"Chaine 2 : de {GENESE} a {jusqu_a} UTC (journees PT completes)", flush=True)
     rb, eb, mb = collecte_b(jusqu_a)
+    # ⭐ B se SAUVE avant A : une coupure en A ne perd plus B (27/11 : 1 h 45
+    #   de B jetees avec l'annulation).
+    ecrire(par_jour(rb), dossier)
+    json.dump(bilan(par_jour(rb), eb, mb), open(os.path.join(dossier, "bilan_B.json"), "w"),
+              indent=1, ensure_ascii=False)
+    print(f"Methodes vues en B : {dict(mb)}", flush=True)
     ra, ea, meth = collecte_a(mb.keys())
     jours = par_jour(ra + rb)
     fichiers = ecrire(jours, dossier)
