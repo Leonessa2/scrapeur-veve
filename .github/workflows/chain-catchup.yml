@@ -68,6 +68,13 @@ jobs:
             gh release create chain-archive-daily --title "Archive quotidienne transferts CollectChain" \
               --notes "1 CSV.gz par journee PT complete."
           gh release upload chain-archive-daily archive/transfers_daily_*.csv.gz --clobber
+          # 🔗 27/11/2026 : mints « stock » de la chaine 2 (sans metadonnee),
+          #    ranges A PART (release lue par personne).
+          if ls archive_stock/*.csv.gz >/dev/null 2>&1; then
+            gh release view chaine2-stock >/dev/null 2>&1 || \
+              gh release create chaine2-stock --title "Chaine 2 : mints stock (sans metadonnee)" --notes "Classes a part (Preda, 27/11/2026)."
+            gh release upload chaine2-stock archive_stock/*.csv.gz --clobber
+          fi
           echo "Uploade :" && ls -lh archive/
 
       - name: 2) Wallet registry

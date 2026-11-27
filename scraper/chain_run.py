@@ -67,7 +67,16 @@ from scraper import chain_sheets as cs
 # seules les journees ecrites APRES ce lot portent un token_id. Ecrit ici pour
 # que ca ne se redecouvre pas dans six mois comme une anomalie.
 ARCHIVE_HEADER = ["block", "log_index", "ts_utc", "date_pt", "kind", "category",
-                  "veve_uuid", "edition", "from", "to", "token_id"]
+                  "veve_uuid", "edition", "from", "to", "token_id", "bloc_chaine2"]
+# 🔗 12e colonne (27/11/2026) — `bloc_chaine2` : le numero de bloc REEL de la
+# chaine 2 (CollectChain repartie a zero le 19/11). La colonne `block` porte
+# alors 1 000 000 000 + ce numero (voir collectchain.bloc_archive). Vide pour
+# l'ancienne chaine. ⛔ Toujours EN FIN, meme raison que `token_id` ci-dessus.
+# Lecteurs verifies le 27/11 : merge_transfers (position p[0..9]), ledger.py
+# et pouls.mjs de veveprice (par nom), base_build (DuckDB, essaye sur des
+# fichiers a 10/11/12 colonnes) — aucun ne casse.
+STOCK_HEADER = ["block", "log_index", "ts_utc", "date_pt", "kind", "from", "to",
+                "token_id", "bloc_chaine2"]
 
 
 def _archive_records(records, min_complete_day: str):
@@ -107,11 +116,40 @@ def _archive_records(records, min_complete_day: str):
                 # paolo). Un KeyError ici arreterait l'archivage d'une journee
                 # entiere pour une colonne d'appoint — le prix est sans commune
                 # mesure avec le gain.
-                w.writerow([r["block"], r["log_index"] or 0,
+                bloc, bloc2 = cc.bloc_archive(r)
+                w.writerow([bloc, r["log_index"] or 0,
                             r["ts"].strftime("%Y-%m-%d %H:%M:%S"), r["date"],
                             r["kind"], r["category"], r["veve_uuid"],
                             r["edition"], r["from"], r["to"],
-                            r.get("token_id") or ""])
+                            r.get("token_id") or "", bloc2])
+        counts[day] = len(recs)
+    return counts
+
+
+def _archive_stock(stock, min_complete_day: str):
+    """Mints « stock » de la chaine 2 (sans metadonnee, crees chez VeVe) :
+    gardes A PART dans archive_stock/stock_mints_<date_pt>.csv.gz, jamais dans
+    l'archive des transferts (decision de Preda, 27/11). ⛔ Le nom ne contient
+    ni « transfers » ni « daily » : ledger.py ramasse `*transfers*daily*`."""
+    by_day = {}
+    for r in stock or []:
+        if r["date"] > min_complete_day:
+            by_day.setdefault(r["date"], []).append(r)
+    if not by_day:
+        return {}
+    os.makedirs("archive_stock", exist_ok=True)
+    counts = {}
+    for day, recs in sorted(by_day.items()):
+        recs.sort(key=lambda r: (r["ts"], r["block"] or 0, r["log_index"] or 0))
+        with gzip.open(os.path.join("archive_stock", f"stock_mints_{day}.csv.gz"),
+                       "wt", encoding="utf-8", newline="") as f:
+            w = csv.writer(f, lineterminator="\n")
+            w.writerow(STOCK_HEADER)
+            for r in recs:
+                bloc, bloc2 = cc.bloc_archive(r)
+                w.writerow([bloc, r["log_index"] or 0, r["ts"].strftime("%Y-%m-%d %H:%M:%S"),
+                            r["date"], r["kind"], r["from"], r["to"],
+                            r.get("token_id") or "", bloc2])
         counts[day] = len(recs)
     return counts
 
@@ -142,6 +180,7 @@ def main() -> int:
     today_start = pt_midnight.astimezone(_dt.timezone.utc).replace(tzinfo=None)
     last_complete_day = now_pt.date() - _dt.timedelta(days=1)
 
+    records_archive = None          # rattrapage2 : sans les journees deja publiees
     try:
         if mode == "backfill":
             cutoff = _dt.datetime.utcnow() - _dt.timedelta(days=backfill_days)
@@ -152,8 +191,58 @@ def main() -> int:
             added = cs.append_activity(sheet_id, rows, replace=True)
             cs.append_items(sheet_id, cc.aggregate_items(records), replace=True)
             pruned = 0
+        elif mode == "rattrapage2":
+            # 🔗 RATTRAPAGE CHAINE 2 (27/11/2026, go de Preda) : une seule fois,
+            # a la main (`chaine2-rattrapage.yml`). Collecte du 19/11 13:03 UTC
+            # a la fin de la veille PT (scraper/chaine2.py : sans recreations
+            # de la migration), puis meme suite que `daily` : Sheet, archive,
+            # registre, point de reprise en numeros REELS de la chaine 2.
+            from scraper import chaine2 as c2
+            # ⛔ UNE SEULE FOIS : si le point de reprise est deja sur la chaine 2,
+            #   le rattrapage est fait — le relancer doublerait les lignes du Sheet.
+            deja_pt = cs.read_checkpoint(sheet_id)
+            tete = cc.tete_chaine()
+            if deja_pt and tete and deja_pt[0] <= tete:
+                raise RuntimeError(f"Rattrapage DEJA FAIT : point de reprise {deja_pt} "
+                                   f"sur la chaine 2 (dernier bloc {tete}). Rien a faire.")
+            rb, eb, mb = c2.collecte_b(today_start)
+            ra, ea, _m = c2.collecte_a(mb.keys())
+            tout = [r for lot in c2.par_jour(ra + rb).values() for r in lot]
+            stock = [r for r in tout if cc.est_stock(r)]
+            records = [r for r in tout if not cc.est_stock(r)]
+            plus = max(tout, key=lambda r: (r["block"], r["log_index"] or 0)) if tout else None
+            meta = {"pages": 0, "count": len(records), "skipped_current_day": 0,
+                    "newest_block": plus["block"] if plus else None,
+                    "newest_log_index": (plus["log_index"] or 0) if plus else None,
+                    "newest_ts": plus["ts"].strftime("%Y-%m-%d %H:%M:%S") if plus else "",
+                    "migration_ecartee": sum(eb.values()) + sum(ea.values()),
+                    "stock": stock}
+            print(f"RATTRAPAGE CHAINE 2 : {len(records)} transferts, {len(stock)} mints "
+                  f"stock mis a part, {meta['migration_ecartee']} recreations ecartees.",
+                  flush=True)
+            # ⛔ Les journees DEJA dans la release ne sont pas reecrites.
+            deja = {j.strip() for j in os.environ.get("CHAIN2_JOURS_DEJA", "").split(",")
+                    if j.strip()}
+            rows = cc.aggregate_daily(records)
+            added = cs.append_activity(sheet_id, rows)
+            cs.append_items(sheet_id, cc.aggregate_items(records))
+            pruned = cs.prune_activity(sheet_id) + cs.prune_items(sheet_id)
+            # ⭐ Point de reprise pose TOUT DE SUITE apres le Sheet : si la suite
+            #   echoue, une relance ne rajoute pas une 2e fois les memes lignes.
+            if meta.get("newest_block"):
+                cs.write_meta(sheet_id, meta, totals)
+            cutoff = _dt.datetime(2026, 11, 18, 12, 0)      # journee PT 18/11 exclue
+            records_archive = [r for r in records if r["date"] not in deja]
         else:
             checkpoint = cs.read_checkpoint(sheet_id)
+            # 🔗 GARDE DU 27/11/2026 : un point de reprise PLUS GRAND que le
+            # dernier bloc de la chaine = la chaine est repartie a zero (19/11).
+            # Avant, l'etape ramenait 0 transfert et restait VERTE huit jours.
+            tete = cc.tete_chaine()
+            if checkpoint and tete and checkpoint[0] > tete:
+                raise RuntimeError(
+                    f"CHAINE REPARTIE A ZERO : point de reprise {checkpoint[0]} > dernier "
+                    f"bloc {tete}. Lancer chaine2-rattrapage.yml (une fois), pas ce mode.")
             cutoff = _dt.datetime.utcnow() - _dt.timedelta(days=cs.RETENTION_DAYS)
             print(f"DAILY: checkpoint={checkpoint}, safety cutoff={cutoff:%Y-%m-%d}, "
                   f"last complete day={last_complete_day}", flush=True)
@@ -208,7 +297,14 @@ def main() -> int:
         # partent en archive/ (upload Release chain-archive-daily par le workflow).
         cutoff_pt_day = cutoff.replace(tzinfo=_dt.timezone.utc) \
             .astimezone(cc.PT).strftime("%Y-%m-%d")
-        arch = _archive_records(records, cutoff_pt_day)
+        arch = _archive_records(records if records_archive is None else records_archive,
+                                cutoff_pt_day)
+        st = _archive_stock(meta.get("stock"), cutoff_pt_day)
+        if st:
+            summary["stock_days"] = len(st)
+            summary["stock_rows"] = sum(st.values())
+            print(f"Stock chaine 2 : {sum(st.values())} mints sans metadonnee -> "
+                  f"archive_stock/ (a part).", flush=True)
         if arch:
             summary["archived_days"] = len(arch)
             summary["archived_rows"] = sum(arch.values())
@@ -241,6 +337,7 @@ def main() -> int:
             print(f"wallet registry warning: {e}", flush=True)
 
         summary.update(transfers_fetched=meta["count"], pages=meta["pages"],
+                       migration_ecartee=meta.get("migration_ecartee", 0),
                        activity_rows_added=added, rows_pruned=pruned,
                        escrow_listings_added=esc_added)
 

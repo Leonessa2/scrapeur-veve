@@ -88,7 +88,10 @@ HEADER = ["wallet", "first_seen", "last_active", "tx_count"]
 # est un champ du TRANSFERT : il survit la ou l'uuid meurt.
 # ⭐⭐ UNE LIGNE ANONYME EST UNE LIGNE DONT ON A LU LE MAUVAIS CHAMP.
 ARCHIVE_HEADER = ["block", "log_index", "ts_utc", "date_pt", "kind",
-                  "category", "veve_uuid", "edition", "from", "to", "token_id"]
+                  "category", "veve_uuid", "edition", "from", "to", "token_id",
+                  # 🔗 27/11/2026 : bloc REEL de la chaine 2 (repartie a zero le
+                  # 19/11) ; `block` porte alors 1 000 000 000 + ce numero.
+                  "bloc_chaine2"]
 SAVE_EVERY_PAGES = 2000          # checkpoint intermediaire (crash-safety)
 COUNTERS_URL = f"{cc.API_BASE}/tokens/{cc.CONTRACT}/counters"
 
@@ -217,12 +220,15 @@ def _archive_row(it: Dict[str, Any], ts: _dt.datetime, d: str,
     cat, uuid = cc._categorise(inst)
     md = inst.get("metadata") or {}
     ed = md.get("edition") if isinstance(md, dict) else ""
-    return [it.get("block_number"), it.get("log_index"),
+    bloc, bloc2 = it.get("block_number"), ""
+    if bloc is not None and ts >= cc.GENESE_CHAINE2:
+        bloc, bloc2 = cc.DECALAGE_CHAINE2 + int(bloc), str(bloc)
+    return [bloc, it.get("log_index"),
             ts.strftime("%Y-%m-%d %H:%M:%S"), d, _kind(frm, to), cat, uuid,
             ed if ed not in (None, "") else "", frm, to,
             # ⭐ depuis `total`, PAS depuis `metadata` : c'est ce qui le rend
             # present sur les mints, ou `uuid` sort vide juste au-dessus.
-            str(total.get("token_id") or "")]
+            str(total.get("token_id") or ""), bloc2]
 
 
 def _flush_archive(path: str, rows: List[List[Any]], write_header: bool) -> int:

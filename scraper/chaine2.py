@@ -51,11 +51,13 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from scraper import collectchain as cc
 
-GENESE = _dt.datetime(2026, 11, 19, 13, 3, 35)          # UTC naif, bloc 1
-FIN_MIGRATION = _dt.datetime(2026, 11, 20, 0, 0, 0)     # au-dela : pagination normale
-DECALAGE = 1_000_000_000
-METHODE_MIGRATION = "0x94a5dc9e"
-TOKEN_ID_MAX_ANCIENNE = 14_273_819     # plus haut token_id de l'archive du 18/11
+# ⭐ Les reperes de la chaine 2 vivent dans collectchain (un seul endroit,
+#   lus aussi par chain_run en mode quotidien).
+GENESE = cc.GENESE_CHAINE2
+FIN_MIGRATION = cc.FIN_MIGRATION_CHAINE2
+DECALAGE = cc.DECALAGE_CHAINE2
+METHODE_MIGRATION = cc.METHODE_MIGRATION
+TOKEN_ID_MAX_ANCIENNE = cc.TOKEN_ID_MAX_ANCIENNE
 ADV_URL = f"{cc.API_BASE}/advanced-filters"
 TX_URL = cc.API_BASE + "/transactions/{h}/token-transfers"
 
@@ -64,21 +66,7 @@ ENTETE = ["block", "log_index", "ts_utc", "date_pt", "kind", "category",
 
 
 # ─────────────────────────────── pur ────────────────────────────────────────
-def est_migration(item: Dict[str, Any]) -> bool:
-    """Une recreation de la migration : methode de migration, OU mint depuis
-    zero d'un token_id qui existait deja sur l'ancienne chaine pendant la
-    fenetre de migration. ⭐ Deux criteres concordants (mesure du 27/11) ; un
-    seul suffit a ecarter."""
-    if (item.get("method") or "").lower() == METHODE_MIGRATION:
-        return True
-    frm = ((item.get("from") or {}).get("hash") or "").lower()
-    ts = cc._parse_ts(item.get("timestamp"))
-    try:
-        tid = int((item.get("total") or {}).get("token_id") or 0)
-    except (TypeError, ValueError):
-        tid = 0
-    return (frm == cc.ZERO and ts is not None and ts < FIN_MIGRATION
-            and 0 < tid <= TOKEN_ID_MAX_ANCIENNE)
+est_migration = cc.est_migration
 
 
 def ligne(rec: Dict[str, Any]) -> List[str]:
@@ -279,10 +267,15 @@ def main() -> int:
               indent=1, ensure_ascii=False)
     print(f"Methodes vues en B : {dict(mb)}", flush=True)
     ra, ea, meth = collecte_a(mb.keys())
-    jours = par_jour(ra + rb)
+    tout = ra + rb
+    stock = [r for r in tout if cc.est_stock(r)]
+    jours = par_jour([r for r in tout if not cc.est_stock(r)])
     fichiers = ecrire(jours, dossier)
+    print(f"Stock chaine 2 (a part, hors fichiers) : {len(stock)} mints sans metadonnee",
+          flush=True)
     b = bilan(jours, eb + ea, mb)
     b["methodes_demandees_fenetre_A"] = meth
+    b["stock_mis_a_part"] = len(stock)
     b["fichiers"] = [os.path.basename(f) for f in fichiers]
     json.dump(b, open(os.path.join(dossier, "bilan.json"), "w"), indent=1, ensure_ascii=False)
     print(json.dumps(b, indent=1, ensure_ascii=False))

@@ -132,6 +132,7 @@ on:
       - "catalogue-export"                                          # catalogue-export.yml
       - "CollectChain backfill (manual)"                            # chain-backfill.yml
       - "Rattrapage chain (journee PT complete)"                    # chain-catchup.yml
+      - "Rattrapage chaine 2 (une fois)"                            # chaine2-rattrapage.yml
       - "Comic store prices (daily)"                                # comic-prices.yml
       - "VeVe daily sync (catalogue + chain + pseudos)"             # daily.yml
       - "Hub Discord"                                               # discord.yml
@@ -265,6 +266,8 @@ jobs:
               "Le revenue reel de la veille manquera dans la page STATS, que le daily ecrit 20 min plus tard.",
             "Univers de marche (elements ayant un marche)":
               "Le bloc marche de la page STATS gardera le compte de la veille.",
+            "Rattrapage chaine 2 (une fois)":
+              "Le rattrapage de la chaine 2 (19/11 -> veille) a echoue. Les journees deja publiees ne sont jamais reecrites ; si le Sheet a ete complete, une relance refuse de le doubler. Relire le journal avant de relancer.",
             "Rattrapage chain (journee PT complete)":
               "La journee PT complete n'a pas ete rattrapee : le tableau quotidien de STATS sera decale d'un jour.",
             "Compteurs d'editions VeVe (HEBDO)":

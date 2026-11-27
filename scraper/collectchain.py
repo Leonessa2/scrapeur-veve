@@ -256,6 +256,66 @@ def _flatten(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     }
 
 
+# ---------------------------------------------------------------------------
+# 🔗 CHAINE 2 — CollectChain repartie a zero le 19/11/2026 (mesure du 27/11)
+# ---------------------------------------------------------------------------
+# * Bloc 1 = 19/11/2026 13:03:35 UTC (l'ancienne chaine etait vers 100,5 M).
+# * La migration a RECREE tous les jetons : methode `0x94a5dc9e`, depuis zero,
+#   token_id <= 14 273 819 (le plus haut de l'ancienne chaine). ⛔ PAS des mints.
+# * Nouveaute de la chaine 2 : des mints SANS metadonnee (ni nom, ni image)
+#   crees dans quelques portefeuilles de VeVe = du STOCK, pas des achats
+#   (7 045 du 20 au 26/11 ; 0 sur 4 630 mints le 18/11). Classes a part
+#   (decision de Preda du 27/11) : ni dans l'archive, ni dans le Sheet.
+# * Les blocs repartent de 1 : dans l'ARCHIVE on ecrit DECALAGE + bloc, pour
+#   que la fusion (tri + dedoublonnage par (block, log_index)) ne les melange
+#   pas avec ceux de l'ancienne chaine. Le point de reprise du Sheet, lui,
+#   reste en numeros REELS (c'est ce que l'API renvoie).
+GENESE_CHAINE2 = _dt.datetime(2026, 11, 19, 13, 3, 35)
+FIN_MIGRATION_CHAINE2 = _dt.datetime(2026, 11, 20, 0, 0, 0)
+DECALAGE_CHAINE2 = 1_000_000_000
+METHODE_MIGRATION = "0x94a5dc9e"
+TOKEN_ID_MAX_ANCIENNE = 14_273_819
+
+
+def est_migration(item: Dict[str, Any]) -> bool:
+    """Recreation de la migration du 19/11 (methode, OU mint depuis zero d'un
+    token_id de l'ancienne chaine pendant la fenetre de migration)."""
+    if (item.get("method") or "").lower() == METHODE_MIGRATION:
+        return True
+    frm = ((item.get("from") or {}).get("hash") or "").lower()
+    ts = _parse_ts(item.get("timestamp"))
+    try:
+        tid = int((item.get("total") or {}).get("token_id") or 0)
+    except (TypeError, ValueError):
+        tid = 0
+    return (frm == ZERO and ts is not None and ts < FIN_MIGRATION_CHAINE2
+            and 0 < tid <= TOKEN_ID_MAX_ANCIENNE)
+
+
+def est_stock(rec: Dict[str, Any]) -> bool:
+    """Mint de la chaine 2 sans metadonnee : du stock cree chez VeVe."""
+    return (rec.get("kind") in ("mint", "vault_mint") and not rec.get("veve_uuid")
+            and rec.get("category") == "unknown"
+            and rec.get("ts") is not None and rec["ts"] >= GENESE_CHAINE2)
+
+
+def bloc_archive(rec: Dict[str, Any]) -> Tuple[int, str]:
+    """(bloc ecrit dans l'archive, bloc reel chaine 2 ou "")."""
+    b = int(rec["block"] or 0)
+    if rec.get("ts") is not None and rec["ts"] >= GENESE_CHAINE2:
+        return DECALAGE_CHAINE2 + b, str(b)
+    return b, ""
+
+
+def tete_chaine() -> Optional[int]:
+    """Dernier bloc de la chaine (stats publiques). None si illisible."""
+    try:
+        d = _get(_session(), STATS_URL, {})
+        return int(d.get("total_blocks") or 0) or None
+    except Exception:
+        return None
+
+
 def fetch_transfers(cutoff: _dt.datetime,
                     checkpoint: Optional[Tuple[int, int]] = None,
                     until: Optional[_dt.datetime] = None,
@@ -278,6 +338,8 @@ def fetch_transfers(cutoff: _dt.datetime,
     newest: Optional[Dict[str, Any]] = None
     pages = 0
     skipped_recent = 0
+    skipped_migration = 0
+    stock: List[Dict[str, Any]] = []
     stop = False
 
     while pages < max_pages and not stop:
@@ -286,6 +348,9 @@ def fetch_transfers(cutoff: _dt.datetime,
         if not items:
             break
         for item in items:
+            if est_migration(item):
+                skipped_migration += 1
+                continue
             rec = _flatten(item)
             if rec is None:
                 continue
@@ -302,6 +367,9 @@ def fetch_transfers(cutoff: _dt.datetime,
                 continue
             if newest is None:
                 newest = rec
+            if est_stock(rec):
+                stock.append(rec)       # chaine 2 : stock VeVe, classe a part
+                continue
             records.append(rec)
         pages += 1
         if pages % 50 == 0:
@@ -321,6 +389,8 @@ def fetch_transfers(cutoff: _dt.datetime,
         "newest_block": newest["block"] if newest else None,
         "newest_log_index": (newest["log_index"] or 0) if newest else None,
         "newest_ts": newest["ts"].strftime("%Y-%m-%d %H:%M:%S") if newest else "",
+        "migration_ecartee": skipped_migration,
+        "stock": stock,
     }
     print(f"Fetched {len(records)} transfers over {pages} pages "
           f"(newest processed block {meta['newest_block']}, "

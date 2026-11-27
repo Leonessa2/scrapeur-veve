@@ -205,4 +205,5 @@ def test_rendu_a_blanc_de_larchive(tmp_path, monkeypatch, capsys):
         print(rendu, end="")
         print("----------------------------------------")
     assert "token_id" in rendu.splitlines()[0]
-    assert rendu.splitlines()[1].endswith(",111")
+    # 27/11/2026 : `bloc_chaine2` suit `token_id` (vide sur l'ancienne chaine).
+    assert rendu.splitlines()[1].endswith(",111,")
