@@ -49,7 +49,11 @@ permissions:
 
 jobs:
   ledger:
-    runs-on: ubuntu-latest
+    # 🔴 27/11/2026 : FIGE sur ubuntu-24.04 (decision de Preda). La Fusion de
+    #   jetonveve est morte faute de memoire sur « ubuntu-latest » (Ubuntu 26.04,
+    #   swap sur disque) ; sur 24.04 (swap zram) elle a culmine a 15,2 Go / 15,7.
+    #   Cette tache garde elle aussi de gros volumes en memoire.
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
       GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
