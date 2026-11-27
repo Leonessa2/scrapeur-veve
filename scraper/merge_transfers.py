@@ -31,7 +31,10 @@ import datetime as _dt
 import glob
 import gzip
 import os
+import shutil
+import subprocess
 import sys
+import tempfile
 
 OUT_HEADER = ("era,ts_utc,date_pt,kind,category,veve_uuid,edition,from,to,tx_ref")
 
@@ -136,17 +139,149 @@ def _ere_cc(src: str, out) -> int:
     return len(rows)
 
 
+# ═══════════════════════════════════════════════════════════════════════════
+# 💾 METHODE « DISQUE » (27/11/2026, priorite absolue de Preda)
+# ═══════════════════════════════════════════════════════════════════════════
+# La methode « memoire » garde les 24,5 M lignes IMX dans un dictionnaire :
+# pic MESURE le 27/11 = 15,2 Go sur une machine de 15,7 Go (passait grace au
+# swap zram d'ubuntu-24.04 ; morte sur ubuntu 26.04). La Fusion grossit chaque
+# jour : plus aucune marge.
+# ⇒ Meme resultat, AUTREMENT : chaque ligne part dans un fichier temporaire
+#   avec ses cles, et `sort` (GNU, borne en memoire par -S, deborde sur disque)
+#   fait le dedoublonnage et le tri.
+# ⭐⭐ IDENTIQUE A L'OCTET a la methode memoire, par construction :
+#   - IMX : on garde la PREMIERE occurrence d'un txn_id (ordre des fichiers),
+#     puis tri STABLE par horodatage = tri par (ts, rang de 1re apparition) ;
+#   - CollectChain : premiere occurrence d'un (block, log_index), puis tri par
+#     (block, log_index).
+#   Verifie ligne a ligne sur les vraies donnees avant de basculer (essai-fusion).
+METHODE = os.environ.get("MERGE_METHODE", "memoire").strip().lower()
+TRI_MEMOIRE = os.environ.get("MERGE_TRI_MEMOIRE", "2G")
+
+
+def _trier(entree: str, sortie: str, cles: list, tmp: str) -> None:
+    """GNU sort, octets bruts (LC_ALL=C), separateur tabulation."""
+    env = dict(os.environ, LC_ALL="C")
+    cmd = ["sort", "-t", "\t", "-S", TRI_MEMOIRE, "-T", tmp, "-o", sortie] + cles + [entree]
+    subprocess.run(cmd, check=True, env=env)
+
+
+def _sans_tab(ligne: str) -> str:
+    if "\t" in ligne or "\n" in ligne:
+        # ⛔ jamais vu : une tabulation casserait les cles du tri. On s'arrete
+        #   plutot que de produire un fichier faux.
+        raise ValueError(f"tabulation ou saut de ligne dans une ligne : {ligne[:120]!r}")
+    return ligne
+
+
+def _ere_imx_disque(src: str, tok: dict, out, tmp: str) -> int:
+    files = sorted(glob.glob(os.path.join(src, "imx", "*.csv*")))
+    brut = os.path.join(tmp, "imx_brut.tsv")
+    seq = 0
+    with open(brut, "w", encoding="utf-8", newline="") as w:
+        for f in files:
+            with _open(f) as fh:
+                for r in csv.DictReader(fh):
+                    tid = str(r.get("txn_id") or "").strip()
+                    if not tid:
+                        continue
+                    token = str(r.get("token_id") or "").strip()
+                    vu, cat, ed = tok.get(token, ("", "", ""))
+                    ts = _ms_to_iso(r.get("txn_time_ms"))
+                    champs = ["IMX", ts, str(r.get("date_pt") or ""),
+                              str(r.get("txn_type") or "").lower(), cat, vu, ed,
+                              str(r.get("from") or ""), str(r.get("to") or ""),
+                              "imx:" + tid]
+                    ligne = _sans_tab(",".join(_csv_field(c) for c in champs))
+                    _sans_tab(tid)
+                    w.write(f"{tid}\t{seq}\t{_int(r.get('txn_time_ms'))}\t{ligne}\n")
+                    seq += 1
+    # 1) regrouper par txn_id, rang croissant -> garder la 1re occurrence
+    par_tid = os.path.join(tmp, "imx_tid.tsv")
+    _trier(brut, par_tid, ["-k1,1", "-k2,2n"], tmp)
+    os.remove(brut)
+    uniques = os.path.join(tmp, "imx_uniques.tsv")
+    n = 0
+    with open(par_tid, encoding="utf-8", newline="") as r, \
+            open(uniques, "w", encoding="utf-8", newline="") as w:
+        prec = None
+        for l in r:
+            tid, reste = l.split("\t", 1)
+            if tid == prec:
+                continue
+            prec = tid
+            w.write(reste)          # rang \t ts \t ligne
+            n += 1
+    os.remove(par_tid)
+    # 2) tri par (ts, rang) = le tri stable de la methode memoire
+    trie = os.path.join(tmp, "imx_trie.tsv")
+    _trier(uniques, trie, ["-k2,2n", "-k1,1n"], tmp)
+    os.remove(uniques)
+    with open(trie, encoding="utf-8", newline="") as r:
+        for l in r:
+            out.write(l.split("\t", 2)[2])
+    os.remove(trie)
+    print(f"  IMX : {n} transferts ({len(files)} fichier(s)).", flush=True)
+    return n
+
+
+def _ere_cc_disque(src: str, out, tmp: str) -> int:
+    files = sorted(glob.glob(os.path.join(src, "cc", "*.csv*")))
+    brut = os.path.join(tmp, "cc_brut.tsv")
+    seq = 0
+    with open(brut, "w", encoding="utf-8", newline="") as w:
+        for f in files:
+            with _open(f) as fh:
+                fh.readline()           # entete
+                for line in fh:
+                    p = line.rstrip("\n").rstrip("\r").split(",")
+                    if len(p) < 10:
+                        continue
+                    champs = ["CollectChain", p[2], p[3], p[4], p[5], p[6], p[7],
+                              p[8], p[9], "cc:" + p[0] + ":" + p[1]]
+                    ligne = _sans_tab(",".join(_csv_field(c) for c in champs))
+                    w.write(f"{_int(p[0])}\t{_int(p[1])}\t{seq}\t{ligne}\n")
+                    seq += 1
+    trie = os.path.join(tmp, "cc_trie.tsv")
+    _trier(brut, trie, ["-k1,1n", "-k2,2n", "-k3,3n"], tmp)
+    os.remove(brut)
+    n = 0
+    with open(trie, encoding="utf-8", newline="") as r:
+        prec = None
+        for l in r:
+            b, li, _seq, ligne = l.split("\t", 3)
+            if (b, li) == prec:
+                continue                # doublon : la 1re occurrence est deja ecrite
+            prec = (b, li)
+            out.write(ligne)
+            n += 1
+    os.remove(trie)
+    print(f"  CollectChain : {n} transferts ({len(files)} fichier(s)).", flush=True)
+    return n
+
+
 def main() -> int:
     src = sys.argv[1] if len(sys.argv) > 1 else "arch"
     out = sys.argv[2] if len(sys.argv) > 2 else "transfers_full.csv.gz"
     os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
 
     tok = _charger_map(src)
+    methode = os.environ.get("MERGE_METHODE", METHODE).strip().lower()
+    print(f"  methode : {methode}", flush=True)
     with gzip.open(out, "wt", encoding="utf-8", newline="") as fh:
         fh.write(OUT_HEADER + "\n")
-        n_imx = _ere_imx(src, tok, fh)   # IMX d'abord (plus ancien)
-        tok.clear()                      # libere la table de mapping
-        n_cc = _ere_cc(src, fh)          # puis CollectChain
+        if methode == "disque":
+            tmp = tempfile.mkdtemp(prefix="fusion_", dir=os.environ.get("MERGE_TMP") or None)
+            try:
+                n_imx = _ere_imx_disque(src, tok, fh, tmp)
+                tok.clear()
+                n_cc = _ere_cc_disque(src, fh, tmp)
+            finally:
+                shutil.rmtree(tmp, ignore_errors=True)
+        else:
+            n_imx = _ere_imx(src, tok, fh)   # IMX d'abord (plus ancien)
+            tok.clear()                      # libere la table de mapping
+            n_cc = _ere_cc(src, fh)          # puis CollectChain
     taille = os.path.getsize(out) / (1024 * 1024)
     print(f"✅ {out} : {n_imx + n_cc} transferts (IMX {n_imx} -> CollectChain "
           f"{n_cc}), {taille:.1f} Mo.", flush=True)
