@@ -192,11 +192,11 @@ def _periode_couverte(d: Optional[dt.date], premier: dt.date, sans_trou: bool,
     if d is None:
         return "date_inconnue"
     if d < premier:
-        return "non_couverte"            # avant notre premiere donnee
+        return "non_couverte_avant_premiere_donnee"
     if d > collecte:
-        return "non_couverte"            # date dans le futur (pas encore sortie)
+        return "non_couverte_date_future"
     if not sans_trou and TROU_DEBUT <= d <= TROU_FIN:
-        return "non_couverte"            # trou du 30/09 au 25/11 non comble (faux trait droit)
+        return "non_couverte_trou_comics"   # trou du 30/09 au 25/11 non comble (faux trait droit)
     return "couverte"
 
 
@@ -226,7 +226,10 @@ def comparer(prix: str, catalogue: str, collecte: dt.date, sortie_csv: str = "",
         premier = p[0][0].date()
         avant = any(t.date() < TROU_DEBUT for t, _ in p)
         dedans = any(TROU_DEBUT <= t.date() <= TROU_FIN for t, _ in p)
-        sans_trou = dedans or not avant          # combles, ou nees apres le trou
+        # Le trou ne concerne que les comics (prices-full n'ecrit qu'au changement :
+        # un collectible sans point dans le trou a juste garde le meme floor).
+        comic = (r.get("kind") or "").strip().lower() == "comic"
+        sans_trou = dedans or not avant or not comic
         n["fiches_trou_non_comble"] += 0 if sans_trou else 1
         act = {"ath": (nombre(r.get("ath")) or None, date_libre(r.get("ath_date"))),
                "atl": (nombre(r.get("atl")) or None, date_libre(r.get("atl_date")))}

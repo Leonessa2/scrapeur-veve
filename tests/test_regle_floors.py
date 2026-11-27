@@ -83,7 +83,7 @@ def test_plus_long_pas_d_offre_toute_la_journee_case_vide():
 
 def test_periode_couverte():
     c = R._periode_couverte
-    assert c(D(2021, 1, 1), D(2022, 1, 1), True, D(2026, 11, 27)) == "non_couverte"
-    assert c(D(2026, 10, 15), D(2022, 1, 1), False, D(2026, 11, 27)) == "non_couverte"
+    assert c(D(2021, 1, 1), D(2022, 1, 1), True, D(2026, 11, 27)) == "non_couverte_avant_premiere_donnee"
+    assert c(D(2026, 10, 15), D(2022, 1, 1), False, D(2026, 11, 27)) == "non_couverte_trou_comics"
     assert c(D(2026, 10, 15), D(2022, 1, 1), True, D(2026, 11, 27)) == "couverte"
     assert c(None, D(2022, 1, 1), True, D(2026, 11, 27)) == "date_inconnue"
