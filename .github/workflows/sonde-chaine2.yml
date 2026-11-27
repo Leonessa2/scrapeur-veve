@@ -1,0 +1,40 @@
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : .github/workflows/sonde-chaine2.yml
+#
+# 🔗 CHAINE 2 — SONDE SANS PUBLICATION (27/11/2026).
+# CollectChain est repartie a zero le 19/11/2026 a 13:03 UTC. Cette tache
+# collecte les vrais transferts de la nouvelle chaine (sans les ~13 M
+# recreations de la migration) et les range en fichiers journaliers.
+# ⛔ ELLE NE PUBLIE RIEN : ni release, ni Sheet, ni Discord. Les fichiers
+#    partent en ARTEFACT de la tache (visible seulement ici, efface au bout de
+#    14 jours). Les publier dans `chain-archive-daily` = go de Preda.
+name: Sonde chaine 2 (sans publication)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sonde:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Dependances
+        run: pip install -r requirements.txt
+      - name: Collecter la chaine 2 (19/11 13:03 UTC -> veille PT)
+        env:
+          CHAINE2_DOSSIER: chaine2
+        run: python -m scraper.chaine2
+      - name: Ranger le resultat (artefact, pas de release)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chaine2-${{ github.run_id }}
+          path: chaine2/
+          retention-days: 14
+          if-no-files-found: warn

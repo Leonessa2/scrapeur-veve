@@ -71,6 +71,11 @@ EXEMPTES = {
         True,
         "Alerte deja elle-meme (etape « Alerte Discord si echec »).",
     ),
+    "sonde-chaine2.yml": (
+        False,
+        "Sonde lancee A LA MAIN, regardee en direct par celui qui la lance ; "
+        "elle ne publie rien. Son echec ne laisse rien de perime derriere lui.",
+    ),
     "alerte-tech-ping.yml": (
         False,
         "C'est le TESTEUR du webhook : il echoue expres quand le secret manque. "
