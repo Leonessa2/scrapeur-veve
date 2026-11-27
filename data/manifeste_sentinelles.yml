@@ -935,15 +935,9 @@ lot_s:
 
   # B. Echecs de TOUS les workflows des depots, sur cette fenetre (heures).
   echecs_fenetre_h: 26
+  # analytics.yml et ledger-writer.yml retires le 27/11 : chaine des transferts
+  # reparee (Fusion 39 957 124 lignes, analytics-derived et ledger-data du 27/11).
   echecs_attendus:
-  - depot: Leonessa2/jetonveve
-    fichier: analytics.yml
-    jusqu_au: "2026-12-31"
-    raison: "source transfers-full trop vieille tant que la chaine des transferts n'est pas reparee (Fusion transferts desactivee par Preda le 27/11)"
-  - depot: Leonessa2/scrapeur-veve
-    fichier: ledger-writer.yml
-    jusqu_au: "2026-12-31"
-    raison: "consequence d'analytics.yml (garde-fou des 7 jours, voulu)"
   - depot: Leonessa2/jetonveve
     fichier: essai-filet.yml
     jusqu_au: "2099-12-31"
@@ -961,11 +955,9 @@ lot_s:
   #    (JETON_A_VERIFIER_<NOM> dans sentinelle.yml). Ceux ranges ailleurs sont
   #    declares ici, avec leur date d'expiration NOTEE A LA MAIN.
   preavis_jetons_j: 14
-  jetons_declares:
-  - nom: PINGER_FLOORWATCH
-    range: cron-job.org (tache 8139600)
-    expire_le: "2027-11-25"   # approximatif (cree le 26/11/2026, 1 an) : date exacte a noter par Preda
-    sert_a: "pinger de floor-watch toutes les 30 min"
+  jetons_declares: []
+  # ⓘ PINGER_FLOORWATCH n'est PAS liste : SANS date d'expiration (constat de
+  #   Preda, RESEAU v3.19, 27/11/2026) — rien a surveiller sur sa date.
   # ⓘ DEV_SCRAPEUR n'est PAS liste : decision de Preda (27/11/2026) — un seul
   #   jeton a acces complet, SANS expiration, voulu. Rien a surveiller sur sa date.
 
