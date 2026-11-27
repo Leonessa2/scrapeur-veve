@@ -1,0 +1,38 @@
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : .github/workflows/sonde-regle-floors.yml
+#
+# 📐 SONDE SANS PUBLICATION (27/11/2026) : combien de fiches changeraient si la
+# regle des floors / ATH / ATL (CONTRAT-brouillon section 3, decidee par Preda
+# le 27/11) etait appliquee ? Lit `prices-full` et `catalogue` (jetonveve),
+# compte, et range 400 exemples en artefact. ⛔ Rien n'est publie.
+name: Sonde regle floors ATH ATL (sans publication)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compter:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Telecharger prices-full et catalogue (jetonveve, publics)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download prices-full -R Leonessa2/jetonveve -p prices.csv.gz
+          gh release download catalogue -R Leonessa2/jetonveve -p catalogue.csv.gz
+          gh release view prices-full -R Leonessa2/jetonveve --json assets -q '.assets[] | select(.name=="prices.csv.gz") | .updatedAt'
+          ls -lh *.csv.gz
+      - name: Compter
+        run: python -m scraper.regle_floors prices.csv.gz catalogue.csv.gz "$(date -u +%F)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: regle-floors-exemples-${{ github.run_id }}
+          path: exemples_changements.csv
+          retention-days: 14

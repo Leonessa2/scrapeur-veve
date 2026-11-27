@@ -71,6 +71,10 @@ EXEMPTES = {
         True,
         "Alerte deja elle-meme (etape « Alerte Discord si echec »).",
     ),
+    "sonde-regle-floors.yml": (
+        False,
+        "Sonde lancee A LA MAIN, regardee en direct ; elle ne publie rien.",
+    ),
     "sonde-chaine2.yml": (
         False,
         "Sonde lancee A LA MAIN, regardee en direct par celui qui la lance ; "
