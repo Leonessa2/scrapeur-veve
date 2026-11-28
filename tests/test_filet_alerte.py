@@ -75,6 +75,10 @@ EXEMPTES = {
         False,
         "Sonde lancee A LA MAIN, regardee en direct ; elle ne publie rien.",
     ),
+    "sonde-bannieres.yml": (
+        False,
+        "Sonde lancee A LA MAIN, lecture seule (bannieres de VeVe) ; n'ecrit rien.",
+    ),
     "sonde-blog.yml": (
         False,
         "Sonde lancee A LA MAIN, lecture seule de 📝C-BLOG ; elle n'ecrit rien.",

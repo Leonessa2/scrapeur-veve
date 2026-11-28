@@ -1,0 +1,25 @@
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : .github/workflows/sonde-bannieres.yml
+#
+# 📐 SONDE LECTURE SEULE (28/11/2026) : ou trouver les bannieres de VeVe pour
+# VeVe France ? Interroge l'API publique de VeVe et quelques pages.
+# ⛔ N'ecrit rien, ne publie rien, ne poste rien.
+name: Sonde bannieres VeVe (lecture seule)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  chercher:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install -r requirements.txt
+      - run: python -m scraper.sonde_bannieres
