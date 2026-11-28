@@ -40,7 +40,7 @@ jobs:
     #    republier depuis les releves `-prev`.
     env:
       CONTRAT_OFFRES_VIDES: "1"
-      CONTRAT_FLOORS_JOUR: "0"
+      CONTRAT_FLOORS_JOUR: "1"
       CONTRAT_ATH_ATL: "0"
     steps:
       - uses: actions/checkout@v4
