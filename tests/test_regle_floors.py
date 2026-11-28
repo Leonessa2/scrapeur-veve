@@ -130,6 +130,11 @@ def test_v4_au_dessus_de_15000_jamais_meme_des_semaines():
     assert ath == 3000.0 and atl == 1499.0
 
 
-def test_v4_a_15000_pile_compte():
-    _, ath, _, _, _ = R.appliquer([(D(2026, 11, 1), 15000.0)])
-    assert ath == 15000.0
+def test_v41_a_15000_pile_ne_compte_pas():
+    """v4.1 : 15 000 $ ou plus, jamais (annonces troll au prix maximum)."""
+    jours = [(D(2026, 11, k), 30.0) for k in range(1, 10)] + [(D(2026, 11, k), 15000.0) for k in range(10, 20)]
+    _, ath, _, atl, _ = R.appliquer(jours)
+    assert ath == 30.0 and atl == 30.0
+    _, ath, _, _, _ = R.appliquer([(D(2026, 11, 1), 14999.99)])
+    assert ath == 14999.99
+    assert not R.garder_tracker(15000.0, "date_inconnue") and R.garder_tracker(14999.0, "date_inconnue")

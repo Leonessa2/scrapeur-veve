@@ -46,7 +46,7 @@ PLAFOND = 15000.0
 FACTEUR = 20.0
 FENETRE_J = 30
 JOURS_SUSPECT = 2   # un floor suspect (x20 / /20) compte s'il tient 2 jours de suite
-# CONTRAT v4 (Preda, 28/11/2026) : sous 1 $ OU au-dessus de 15 000 $, jamais.
+# CONTRAT v4.1 (Preda, 28/11/2026) : sous 1 $ OU a 15 000 $ ou plus, jamais.
 
 
 def nombre(x) -> Optional[float]:
@@ -159,11 +159,11 @@ def appliquer(jours: List[Tuple[dt.date, Optional[float]]]):
             debut_serie = i
         if f is None:
             continue
+        if f < PLANCHER or f >= PLAFOND:
+            continue                # sous 1 $, ou 15 000 $ ou plus : jamais (v4.1)
         if not s:
             valides.append((f, j))
             continue
-        if f < PLANCHER or f > PLAFOND:
-            continue                # sous 1 $ ou au-dessus de 15 000 $ : jamais (v4)
         if i - debut_serie + 1 == JOURS_SUSPECT:
             # suspect, mais floor du jour assez de jours de suite : compte, date = 1er jour
             valides.append((f, marques[debut_serie][0]))
@@ -214,7 +214,7 @@ def garder_tracker(valeur: Optional[float], periode: str) -> bool:
     trou des comics, date future ou absente), on garde la valeur du tracker,
     a condition qu'elle soit entre 1 $ et 15 000 $ ; sinon notre valeur."""
     return (periode != "couverte" and valeur is not None
-            and PLANCHER <= valeur <= PLAFOND)
+            and PLANCHER <= valeur < PLAFOND)        # v4.1 : 15 000 $ pile exclu
 
 
 def _nombre_txt(f: Optional[float]) -> str:

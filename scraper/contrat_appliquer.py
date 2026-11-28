@@ -1,4 +1,4 @@
-"""Applique CONTRAT.md v4 (sections 2, 3.3 et 3.7) au catalogue du jour, AVANT sa
+"""Applique CONTRAT.md v4.1 (sections 2, 3.3 et 3.7) au catalogue du jour, AVANT sa
 publication par catalogue-export.yml. Trois interrupteurs, tous eteints par
 defaut (go de Preda du 28/11/2026, publication dans l'ordre de la section 3.8) :
 
@@ -144,11 +144,23 @@ def appliquer_catalogue(cat_in: str, prix: str, dossier: str, collecte: dt.date,
                 n["controle_atl_au_dessus_ath"] += 1
     if athatl:
         entete += [b for b in BRUT if b not in entete]
-        for r in lignes:                      # 3.5 (v4) : rien sous 1 $ ni au-dessus de 15 000 $
+        for r in lignes:                      # 3.5 (v4.1) : ATH/ATL entre 1 $ et moins de 15 000 $
             for k in ("ath", "atl"):
                 v = R.nombre(r.get(k))
-                if v is not None and not (R.PLANCHER <= v <= R.PLAFOND):
+                if v is not None and not (R.PLANCHER <= v < R.PLAFOND):
                     n["controle_hors_seuils"] += 1
+    if floors or athatl:
+        # v4.1 : floor actuel a 15 000 $ ou plus -> vide dans `catalogue` (apres le
+        # calcul du floor du jour, qui garde le releve reel et le marque suspect).
+        for r in lignes:
+            v = R.nombre(r.get("floor"))
+            if v is not None and v >= R.PLAFOND:
+                r["floor"] = ""
+                n["floor_vide_15000_ou_plus"] += 1
+        for r in lignes:
+            v = R.nombre(r.get("floor"))
+            if v is not None and v >= R.PLAFOND:
+                n["controle_floor_15000_ou_plus"] += 1
     os.makedirs(dossier, exist_ok=True)
     with gzip.open(os.path.join(dossier, "catalogue.csv.gz"), "wt", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=entete, lineterminator="\n", extrasaction="ignore")

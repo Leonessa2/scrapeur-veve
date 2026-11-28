@@ -89,3 +89,22 @@ def test_v4_pas_sortie_vide_et_sans_releve_seuils(tmp_path):
     assert rows["a"]["ath"] == "" and rows["a"]["atl"] == "" and rows["a"]["ath_brut"] == "40"
     assert rows["b"]["ath"] == "" and rows["b"]["atl"] == "20" and rows["b"]["ath_brut"] == "160000"
     assert n["fiches_pas_sorties"] == 1
+
+
+def test_v41_floor_15000_ou_plus_vide(tmp_path):
+    import csv, gzip, datetime as dt
+    from scraper import contrat_appliquer as C
+    cat = tmp_path / "c.csv.gz"; prix = tmp_path / "p.csv.gz"
+    with gzip.open(cat, "wt", encoding="utf-8", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["uuid", "kind", "release_date", "floor", "listings", "ath", "atl", "ath_date", "atl_date"])
+        w.writerow(["a", "Collectible", "01/01/2024", "15000", "", "15000", "", "2025-01-01", ""])
+        w.writerow(["b", "Collectible", "01/01/2024", "14999,99", "", "", "", "", ""])
+    with gzip.open(prix, "wt", encoding="utf-8", newline="") as f:
+        f.write("veve_uuid,ts_utc,floor\n")
+    now = dt.datetime(2026, 11, 28, 9)
+    n = C.appliquer_catalogue(str(cat), str(prix), str(tmp_path / "o"), now.date(), now, True, True, True)
+    rows = {r["uuid"]: r for r in csv.DictReader(gzip.open(tmp_path / "o" / "catalogue.csv.gz", "rt", encoding="utf-8"))}
+    assert rows["a"]["floor"] == "" and rows["a"]["ath"] == "" and rows["a"]["ath_brut"] == "15000"
+    assert rows["b"]["floor"] == "14999,99"
+    assert n["floor_vide_15000_ou_plus"] == 1 and not n.get("controle_floor_15000_ou_plus")

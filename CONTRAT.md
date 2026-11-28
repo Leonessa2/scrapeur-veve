@@ -1,10 +1,15 @@
-# CONTRAT — v4 (28/11/2026)
+# CONTRAT — v4.1 (28/11/2026)
 
 > Ce que le Scrapeur publie et comment le lire. **Fait foi pour tous les
 > projets du réseau VeVe.** Toute modification = nouvelle version, annoncée,
 > jamais en silence ; on ajoute des champs, on n'en retire pas sans prévenir.
 >
 > Journal :
+> - v4.1 (28/11/2026, accord de Preda) : le seuil devient **« 15 000 $ ou
+>   plus »** : un floor à 15 000 $ pile ne compte plus pour l'ATH/ATL, une
+>   valeur du tracker gardée doit être sous 15 000 $ ; dans `catalogue`, la
+>   colonne `floor` est **vide** quand le floor actuel est à 15 000 $ ou plus
+>   (même colonne, seule la valeur est vidée). Contrôle bloquant étendu.
 > - v4 (28/11/2026, décision de Preda) : section 3.3 — un floor du jour
 >   **au-dessus de 15 000 $ ne compte jamais** pour l'ATH/ATL (comme sous
 >   1 $), même plusieurs jours de suite ; fiche pas encore sortie : `ath`,
@@ -114,8 +119,8 @@ critères (1 $ et 15 000 $) s'appliquent.
 - **ATH / ATL = le plus haut / le plus bas des floors du jour valides.**
 - Un floor du jour **non suspect** est valide.
 - Un floor du jour **suspect** ne compte que s'il est le floor du jour **deux
-  jours de suite** (cas des vrais graals). **Sous 1 $ ou au-dessus de
-  15 000 $ : jamais**, même plusieurs jours de suite (v4, 28/11/2026 : des
+  jours de suite** (cas des vrais graals). **Sous 1 $, ou à 15 000 $ ou
+  plus : jamais** (v4.1 : 15 000 $ pile compris, suspect ou non), même plusieurs jours de suite (v4, 28/11/2026 : des
   annonces « troll » à 160 000 $ ou 10¹⁵ $ restent en place des semaines).
   Conséquence voulue : une fiche dont le floor dépasse vraiment 15 000 $ a un
   `ath` plus bas que ce floor (le floor réel reste visible dans le fichier
@@ -130,7 +135,7 @@ critères (1 $ et 15 000 $) s'appliquent.
     relevé dans ce trou) ;
   - dans le futur, ou quand le catalogue n'a pas de date.
 - **Une valeur du tracker gardée reste soumise aux seuils** : en dessous de
-  1 $ ou au-dessus de 15 000 $, elle ne compte pas, et c'est notre valeur qui
+  1 $, ou à 15 000 $ ou plus (v4.1), elle ne compte pas, et c'est notre valeur qui
   s'applique.
 - **Période couverte par notre historique : notre valeur remplace celle du
   tracker.**
@@ -140,7 +145,10 @@ critères (1 $ et 15 000 $) s'appliquent.
   `ath`, `atl` et leurs dates **toujours vides**, même si le tracker y met le
   prix boutique (v4) ; ce prix reste visible dans `ath_brut` / `atl_brut`.
 - **Fiche sans aucun relevé chez nous** : la valeur du tracker n'est gardée
-  qu'entre 1 $ et 15 000 $, sinon la case est vide (v4).
+  qu'entre 1 $ et moins de 15 000 $, sinon la case est vide (v4.1).
+- **Colonne `floor` de `catalogue`** : vide quand le floor actuel est à
+  15 000 $ ou plus (v4.1). Le relevé réel reste dans `prices-full` et dans
+  le fichier « floor du jour ».
 - **Les valeurs brutes restent disponibles**, sans filtre : nouvelles
   colonnes `ath_brut`, `atl_brut`, `ath_brut_date`, `atl_brut_date`.
 
@@ -153,7 +161,8 @@ critères (1 $ et 15 000 $) s'appliquent.
 ### 3.5 Contrôles avant publication (Scrapeur)
 - Aucun floor du jour à 0 ; aucune date future ; aucune date avant la sortie.
 - `ath` ≥ `atl` quand les deux existent.
-- Aucun `ath` ni `atl` sous 1 $ ou au-dessus de 15 000 $ (v4).
+- Aucun `ath` ni `atl` sous 1 $ ou à 15 000 $ ou plus, aucun `floor` à
+  15 000 $ ou plus dans `catalogue` (v4.1) : sinon rien n'est publié.
 - Compte des changements par rapport à la version publiée (ATH, ATL, points
   de courbe retirés, jours marqués suspects), donné à Preda avant le go.
 
