@@ -43,6 +43,12 @@ from typing import Dict, List, Optional, Tuple
 
 PLANCHER = 1.0
 PLAFOND = 15000.0
+PLAFOND_AVANT_2023 = 100000.0   # CONTRAT v4.3 (Preda, 28/11/2026) : bullrun 2021-2022
+
+
+def plafond(j: Optional[dt.date]) -> float:
+    """Plafond d'un floor du jour : 100 000 $ avant le 01/01/2023, sinon 15 000 $."""
+    return PLAFOND_AVANT_2023 if (j is not None and j < dt.date(2023, 1, 1)) else PLAFOND
 FACTEUR = 20.0
 FENETRE_J = 30
 JOURS_SUSPECT = 2   # un floor suspect (x20 / /20) compte s'il tient 2 jours de suite
@@ -144,11 +150,13 @@ def appliquer(jours: List[Tuple[dt.date, Optional[float]]]):
             continue
         k = bisect.bisect_left(hist_j, j - dt.timedelta(days=FENETRE_J))
         fen = hist[k:]
-        suspect = f < PLANCHER or f > PLAFOND
+        suspect = f < PLANCHER or f >= plafond(j)       # v4.3 : 15 000 $ pile suspect ; 100 000 $ avant 2023
         if not suspect and fen:
             med = statistics.median(fen)
             if med > 0 and (f > med * FACTEUR or f < med / FACTEUR):
                 suspect = True
+        if not suspect and f >= PLAFOND and not fen:
+            suspect = True          # v4.3 : 15 000 $ ou plus sans historique des 30 jours -> suspect
         marques.append((j, f, suspect))
         hist.append(f)
         hist_j.append(j)
@@ -169,11 +177,13 @@ def candidats(marques) -> List[Tuple[float, dt.date]]:
             debut_serie = i
         if f is None:
             continue
-        if f < PLANCHER or f >= PLAFOND:
+        if f < PLANCHER or f >= plafond(j):
             continue                # sous 1 $, ou 15 000 $ ou plus : jamais (v4.1)
         if not s:
             valides.append((f, j))
             continue
+        if f >= PLAFOND:
+            continue                # v4.3 : 15 000 $ ou plus (avant 2023) ne compte que s'il n'est pas suspect
         if i - debut_serie + 1 == JOURS_SUSPECT:
             # suspect, mais floor du jour assez de jours de suite : compte, date = 1er jour
             valides.append((f, marques[debut_serie][0]))

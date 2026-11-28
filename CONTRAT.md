@@ -1,10 +1,16 @@
-# CONTRAT — v4.2 (28/11/2026)
+# CONTRAT — v4.3 (28/11/2026)
 
 > Ce que le Scrapeur publie et comment le lire. **Fait foi pour tous les
 > projets du réseau VeVe.** Toute modification = nouvelle version, annoncée,
 > jamais en silence ; on ajoute des champs, on n'en retire pas sans prévenir.
 >
 > Journal :
+> - v4.3 (28/11/2026, go de Preda) : **avant le 01/01/2023, plafond relevé à
+>   100 000 $** (bullrun 2021-2022) pour l'ATH/ATL et le marquage suspect ; un
+>   floor de 15 000 $ à 100 000 $ de cette période ne compte que s'il n'est pas
+>   suspect (×20 la médiane des 30 jours, ou sans historique). Section 3.2 : un
+>   floor à 15 000 $ ou plus (100 000 $ avant 2023) est marqué suspect dans
+>   `floors-jour`. Mêmes colonnes.
 > - v4.2 (28/11/2026, go de Preda) : section 3.3 — garde-fous de l'**ATH**
 >   (toujours le plus haut floor du jour valide) : après le 31/07/2026, rien
 >   au-dessus de **3 ×** la référence (plus haute vente réelle fiable ou floor
@@ -114,7 +120,7 @@ pour ses alertes (décision de Preda du 28/11/2026).
 ### 3.2 Floor suspect (colonne `floor_suspect` du fichier « floor du jour », `oui` ou vide)
 Un floor du jour est suspect s'il est :
 - en dessous de **1 $** ;
-- ou au-dessus de **15 000 $** ;
+- ou à **15 000 $ ou plus** (v4.3 ; **100 000 $ ou plus** avant le 01/01/2023) ;
 - ou à plus de **×20** (ou moins de **÷20**) de la **médiane des 30 jours
   précédents** de la même fiche.
 
@@ -131,6 +137,11 @@ critères (1 $ et 15 000 $) s'appliquent.
   Conséquence voulue : une fiche dont le floor dépasse vraiment 15 000 $ a un
   `ath` plus bas que ce floor (le floor réel reste visible dans le fichier
   « floor du jour », marqué suspect).
+- **Avant le 01/01/2023 (v4.3)** : le plafond est **100 000 $** au lieu de
+  15 000 $ (vrais prix du bullrun 2021-2022). Un floor du jour entre 15 000 $
+  et 100 000 $ de cette période ne compte que s'il n'est **pas suspect**
+  (ni plus de ×20 la médiane des 30 jours précédents, ni sans aucun jour dans
+  ces 30 jours) ; l'exception des deux jours de suite ne s'applique pas.
 - **Garde-fous de l'ATH (v4.2)** — un floor du jour valide (ou un ATH du
   tracker gardé) ne compte pour l'ATH que s'il est plausible :
   - daté du **31/07/2026 ou après** (période de nos ventes en dollars) : pas
@@ -182,7 +193,8 @@ critères (1 $ et 15 000 $) s'appliquent.
 ### 3.5 Contrôles avant publication (Scrapeur)
 - Aucun floor du jour à 0 ; aucune date future ; aucune date avant la sortie.
 - `ath` ≥ `atl` quand les deux existent.
-- Aucun `ath` ni `atl` sous 1 $ ou à 15 000 $ ou plus, aucun `floor` à
+- Aucun `ath` ni `atl` sous 1 $ ou à 15 000 $ ou plus (100 000 $ ou plus
+  s'il est daté d'avant le 01/01/2023, v4.3), aucun `floor` à
   15 000 $ ou plus dans `catalogue` (v4.1) : sinon rien n'est publié.
 - Aucun `ath` ≥ 10 000 $ et ≥ 100 × le `floor` actuel, sauf un ATH daté
   d'avant le 01/01/2023 (v4.2) ; aucun `atl` au-dessus de l'`ath` ; fichiers de

@@ -153,3 +153,16 @@ def test_v42_garde_fous_ath():
     # une vente > 20 x le floor du jour n'est pas une reference (Barbarella)
     j = {D(2026, 9, 27): 20.0}
     assert R.reference_ventes([(D(2026, 9, 27), 10000.0), (D(2026, 9, 27), 25.0)], j) == 25.0
+
+
+def test_v43_plafond_100000_avant_2023():
+    """CONTRAT v4.3 (Preda, 28/11/2026) : avant 2023, plafond 100 000 $."""
+    jours = [(D(2021, 12, k), 20000.0) for k in range(1, 20)] + [(D(2022, 1, 5), 43000.0), (D(2022, 1, 6), 43000.0)]
+    _, ath, athd, _, _ = R.appliquer(jours)
+    assert ath == 43000.0 and athd == D(2022, 1, 5)
+    _, ath, _, _, _ = R.appliquer([(D(2021, 12, 30), 50.0), (D(2021, 12, 31), 50.0), (D(2022, 1, 1), 150000.0), (D(2022, 1, 2), 150000.0)])
+    assert ath == 50.0
+    _, ath, _, _, _ = R.appliquer([(D(2022, 12, 30), 50.0), (D(2022, 12, 31), 50.0), (D(2023, 1, 1), 20000.0), (D(2023, 1, 2), 20000.0)])
+    assert ath == 50.0
+    m, _, _, _, _ = R.appliquer([(D(2024, 1, 1), 15000.0)])
+    assert m[0][2] is True

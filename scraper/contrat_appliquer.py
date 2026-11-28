@@ -1,4 +1,4 @@
-"""Applique CONTRAT.md v4.2 (sections 2, 3.3 et 3.7) au catalogue du jour, AVANT sa
+"""Applique CONTRAT.md v4.3 (sections 2, 3.3 et 3.7) au catalogue du jour, AVANT sa
 publication par catalogue-export.yml. Trois interrupteurs, tous eteints par
 defaut (go de Preda du 28/11/2026, publication dans l'ordre de la section 3.8) :
 
@@ -203,7 +203,7 @@ def appliquer_catalogue(cat_in: str, prix: str, dossier: str, collecte: dt.date,
         for r in lignes:                      # 3.5 (v4.1) : ATH/ATL entre 1 $ et moins de 15 000 $
             for k in ("ath", "atl"):
                 v = R.nombre(r.get(k))
-                if v is not None and not (R.PLANCHER <= v < R.PLAFOND):
+                if v is not None and not (R.PLANCHER <= v < R.plafond(R.date_libre(r.get(k + "_date")))):
                     n["controle_hors_seuils"] += 1
             va, fl = R.nombre(r.get("ath")), R.nombre(r.get("floor"))
             d_a = R.date_libre(r.get("ath_date"))
