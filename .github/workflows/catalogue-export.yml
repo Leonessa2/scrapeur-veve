@@ -41,7 +41,7 @@ jobs:
     env:
       CONTRAT_OFFRES_VIDES: "1"
       CONTRAT_FLOORS_JOUR: "1"
-      CONTRAT_ATH_ATL: "0"
+      CONTRAT_ATH_ATL: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
