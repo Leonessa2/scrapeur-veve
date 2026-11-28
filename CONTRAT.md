@@ -1,10 +1,12 @@
-# CONTRAT — v2 (28/11/2026)
+# CONTRAT — v3 (28/11/2026)
 
 > Ce que le Scrapeur publie et comment le lire. **Fait foi pour tous les
 > projets du réseau VeVe.** Toute modification = nouvelle version, annoncée,
 > jamais en silence ; on ajoute des champs, on n'en retire pas sans prévenir.
 >
 > Journal :
+> - v3 (28/11/2026, go de Preda) : section 2 précisée — `elements.csv` ne
+>   change pas ; les offres de l'historique de `prices-full` sont vidées aussi.
 > - v2 (28/11/2026, go de Preda) : bannières de l'accueil de veve.me
 >   (section 5), ajout pur, rien ne change pour les fichiers de la v1.
 > - v1 (28/11/2026, go de Preda) : point décimal dans `prices-full` ; nombre
@@ -36,8 +38,15 @@
 
 ## 2. Nombre d'offres : vide = inconnu, 0 = vraiment zéro
 
-**Colonnes :** `listings` (release `catalogue`, `elements.csv`) et
-`listings` (`prices-full`).
+**Colonnes :** `listings` de la release `catalogue` et `listings` de
+`prices-full` (**historique compris** : toutes les lignes passées sont vidées
+aussi, décision de Preda du 28/11/2026).
+
+**`elements.csv` ne change pas** (dépôt `scrapeur-veve`, `data/elements.csv`) :
+ni ses offres, ni ses ATH/ATL. Il n'est lu ni par veveprice ni par vevewiki,
+mais par `floor-watch.yml` (alertes Discord) et `alertes-audit.yml`
+(jetonveve). Le projet Bot décidera plus tard s'il veut les nouvelles valeurs
+pour ses alertes (décision de Preda du 28/11/2026).
 
 - **Vide** = on ne sait pas. La source ne donne pas l'information, ou on ne
   lui fait pas confiance.
