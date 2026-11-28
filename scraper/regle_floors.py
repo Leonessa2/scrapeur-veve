@@ -45,6 +45,8 @@ PLANCHER = 1.0
 PLAFOND = 15000.0
 FACTEUR = 20.0
 FENETRE_J = 30
+JOURS_SUSPECT = 2   # un floor suspect (x20 / /20) compte s'il tient 2 jours de suite
+# CONTRAT v4 (Preda, 28/11/2026) : sous 1 $ OU au-dessus de 15 000 $, jamais.
 
 
 def nombre(x) -> Optional[float]:
@@ -151,14 +153,20 @@ def appliquer(jours: List[Tuple[dt.date, Optional[float]]]):
         hist.append(f)
         hist_j.append(j)
     valides = []
+    debut_serie = 0                 # indice du 1er jour de la serie de meme floor
     for i, (j, f, s) in enumerate(marques):
+        if i > 0 and (marques[i - 1][1] != f or (j - marques[i - 1][0]).days != 1):
+            debut_serie = i
         if f is None:
             continue
         if not s:
             valides.append((f, j))
-        elif f >= PLANCHER and i > 0 and marques[i - 1][1] == f:
-            # suspect, mais floor du jour DEUX jours de suite : compte, date = 1er jour
-            valides.append((f, marques[i - 1][0]))
+            continue
+        if f < PLANCHER or f > PLAFOND:
+            continue                # sous 1 $ ou au-dessus de 15 000 $ : jamais (v4)
+        if i - debut_serie + 1 == JOURS_SUSPECT:
+            # suspect, mais floor du jour assez de jours de suite : compte, date = 1er jour
+            valides.append((f, marques[debut_serie][0]))
     if not valides:
         return marques, None, None, None, None
     ath = max(valides, key=lambda v: (v[0], -v[1].toordinal()))

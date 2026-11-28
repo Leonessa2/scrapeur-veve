@@ -1,4 +1,4 @@
-"""Applique CONTRAT.md (sections 2, 3.3 et 3.7) au catalogue du jour, AVANT sa
+"""Applique CONTRAT.md v4 (sections 2, 3.3 et 3.7) au catalogue du jour, AVANT sa
 publication par catalogue-export.yml. Trois interrupteurs, tous eteints par
 defaut (go de Preda du 28/11/2026, publication dans l'ordre de la section 3.8) :
 
@@ -86,11 +86,34 @@ def appliquer_catalogue(cat_in: str, prix: str, dossier: str, collecte: dt.date,
         if not p or p[-1][1] != f_jour:          # le floor du catalogue = releve de maintenant
             if p or f_jour:
                 p.append((maintenant, f_jour if f_jour and f_jour > 0 else None))
+        sortie = R.date_libre(r.get("release_date"))
+        pas_sortie = sortie is not None and sortie > collecte
+        if athatl and (pas_sortie or not p):
+            # 3.3 : fiche pas encore sortie -> ATH/ATL vides ; sans releve, la
+            # valeur du tracker gardee reste soumise aux seuils 1 $ / 15 000 $.
+            for b, k in zip(BRUT, ("ath", "atl", "ath_date", "atl_date")):
+                r[b] = r.get(k, "")
+            ch = False
+            for k in ("ath", "atl"):
+                a = R.nombre(r.get(k)) or None
+                garder = (not pas_sortie) and R.garder_tracker(a, "sans_releve")
+                if not garder:
+                    if a is not None:
+                        ch = True
+                        n[f"{k}_change"] += 1
+                    r[k] = ""; r[k + "_date"] = ""
+                else:
+                    d = R.date_libre(r.get(k + "_date"))
+                    if d and d > collecte:
+                        n[f"{k}_date_future_videe"] += 1
+                        r[k + "_date"] = ""
+            if ch:
+                n["ath_ou_atl_change"] += 1
+            n["fiches_pas_sorties" if pas_sortie else "fiches_sans_releve"] += 1
+            if not p or not floors:
+                continue           # une fiche pas sortie garde son floor du jour (3.7), rien de plus
         if not p:
             n["fiches_sans_releve"] += 1
-            if athatl:
-                for b, k in zip(BRUT, ("ath", "atl", "ath_date", "atl_date")):
-                    r[b] = r.get(k, "")
             continue
         marques, fin, act = decider(p, r, collecte)
         if floors:
@@ -101,7 +124,7 @@ def appliquer_catalogue(cat_in: str, prix: str, dossier: str, collecte: dt.date,
         for _, f_, _s in marques:
             if f_ is not None and f_ <= 0:
                 n["controle_floor_a_zero"] += 1
-        if athatl:
+        if athatl and not pas_sortie:
             for b, k in zip(BRUT, ("ath", "atl", "ath_date", "atl_date")):
                 r[b] = r.get(k, "")
             ch = False
@@ -121,6 +144,11 @@ def appliquer_catalogue(cat_in: str, prix: str, dossier: str, collecte: dt.date,
                 n["controle_atl_au_dessus_ath"] += 1
     if athatl:
         entete += [b for b in BRUT if b not in entete]
+        for r in lignes:                      # 3.5 (v4) : rien sous 1 $ ni au-dessus de 15 000 $
+            for k in ("ath", "atl"):
+                v = R.nombre(r.get(k))
+                if v is not None and not (R.PLANCHER <= v <= R.PLAFOND):
+                    n["controle_hors_seuils"] += 1
     os.makedirs(dossier, exist_ok=True)
     with gzip.open(os.path.join(dossier, "catalogue.csv.gz"), "wt", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=entete, lineterminator="\n", extrasaction="ignore")

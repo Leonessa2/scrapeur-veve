@@ -68,3 +68,24 @@ def test_tracker_hors_seuils_remplace(tmp_path):
                           False, False, True)
     r = _lire(tmp_path / "o" / "catalogue.csv.gz")[0]
     assert r["ath"] == "10" and r["ath_brut"] == "10000042"
+
+
+def test_v4_pas_sortie_vide_et_sans_releve_seuils(tmp_path):
+    """CONTRAT v4 : fiche pas encore sortie -> ATH/ATL vides ; fiche sans releve :
+    valeur du tracker au-dessus de 15 000 $ -> vide."""
+    import csv, gzip, datetime as dt
+    from scraper import contrat_appliquer as C
+    cat = tmp_path / "c.csv.gz"; prix = tmp_path / "p.csv.gz"
+    with gzip.open(cat, "wt", encoding="utf-8", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["uuid", "kind", "release_date", "floor", "listings", "ath", "atl", "ath_date", "atl_date"])
+        w.writerow(["a", "Collectible", "05/12/2026 16:00:00", "", "", "40", "40", "2026-12-05", "2026-12-05"])
+        w.writerow(["b", "Collectible", "01/01/2024", "", "", "160000", "20", "2025-01-01", "2025-01-02"])
+    with gzip.open(prix, "wt", encoding="utf-8", newline="") as f:
+        f.write("veve_uuid,ts_utc,floor\n")
+    now = dt.datetime(2026, 11, 28, 9)
+    n = C.appliquer_catalogue(str(cat), str(prix), str(tmp_path / "o"), now.date(), now, True, True, True)
+    rows = {r["uuid"]: r for r in csv.DictReader(gzip.open(tmp_path / "o" / "catalogue.csv.gz", "rt", encoding="utf-8"))}
+    assert rows["a"]["ath"] == "" and rows["a"]["atl"] == "" and rows["a"]["ath_brut"] == "40"
+    assert rows["b"]["ath"] == "" and rows["b"]["atl"] == "20" and rows["b"]["ath_brut"] == "160000"
+    assert n["fiches_pas_sorties"] == 1

@@ -1,10 +1,15 @@
-# CONTRAT — v3 (28/11/2026)
+# CONTRAT — v4 (28/11/2026)
 
 > Ce que le Scrapeur publie et comment le lire. **Fait foi pour tous les
 > projets du réseau VeVe.** Toute modification = nouvelle version, annoncée,
 > jamais en silence ; on ajoute des champs, on n'en retire pas sans prévenir.
 >
 > Journal :
+> - v4 (28/11/2026, décision de Preda) : section 3.3 — un floor du jour
+>   **au-dessus de 15 000 $ ne compte jamais** pour l'ATH/ATL (comme sous
+>   1 $), même plusieurs jours de suite ; fiche pas encore sortie : `ath`,
+>   `atl` et leurs dates **vides** ; fiche sans relevé : la valeur du tracker
+>   reste soumise aux seuils. Mêmes colonnes, rien d'ajouté ni de retiré.
 > - v3 (28/11/2026, go de Preda) : section 2 précisée — `elements.csv` ne
 >   change pas ; les offres de l'historique de `prices-full` sont vidées aussi.
 > - v2 (28/11/2026, go de Preda) : bannières de l'accueil de veve.me
@@ -109,8 +114,12 @@ critères (1 $ et 15 000 $) s'appliquent.
 - **ATH / ATL = le plus haut / le plus bas des floors du jour valides.**
 - Un floor du jour **non suspect** est valide.
 - Un floor du jour **suspect** ne compte que s'il est le floor du jour **deux
-  jours de suite** (cas des vrais graals). **Sous 1 $ : jamais**, même deux
-  jours de suite.
+  jours de suite** (cas des vrais graals). **Sous 1 $ ou au-dessus de
+  15 000 $ : jamais**, même plusieurs jours de suite (v4, 28/11/2026 : des
+  annonces « troll » à 160 000 $ ou 10¹⁵ $ restent en place des semaines).
+  Conséquence voulue : une fiche dont le floor dépasse vraiment 15 000 $ a un
+  `ath` plus bas que ce floor (le floor réel reste visible dans le fichier
+  « floor du jour », marqué suspect).
 - `ath_date` / `atl_date` = le jour de ce floor. Jamais après la date de
   collecte, jamais avant la date de sortie.
 - **Valeur du tracker (my-nft-tracker) : quand on la garde.** Notre historique
@@ -126,9 +135,12 @@ critères (1 $ et 15 000 $) s'appliquent.
 - **Période couverte par notre historique : notre valeur remplace celle du
   tracker.**
 - Une fiche sans aucun floor du jour valide et sans valeur du tracker gardée
-  a `ath`, `atl` et leurs dates **vides**. C'est le cas des fiches pas encore
-  sorties (aujourd'hui, le tracker y met le prix boutique, daté du jour de
-  sortie).
+  a `ath`, `atl` et leurs dates **vides**.
+- **Fiche pas encore sortie** (date de sortie après la date de collecte) :
+  `ath`, `atl` et leurs dates **toujours vides**, même si le tracker y met le
+  prix boutique (v4) ; ce prix reste visible dans `ath_brut` / `atl_brut`.
+- **Fiche sans aucun relevé chez nous** : la valeur du tracker n'est gardée
+  qu'entre 1 $ et 15 000 $, sinon la case est vide (v4).
 - **Les valeurs brutes restent disponibles**, sans filtre : nouvelles
   colonnes `ath_brut`, `atl_brut`, `ath_brut_date`, `atl_brut_date`.
 
@@ -141,6 +153,7 @@ critères (1 $ et 15 000 $) s'appliquent.
 ### 3.5 Contrôles avant publication (Scrapeur)
 - Aucun floor du jour à 0 ; aucune date future ; aucune date avant la sortie.
 - `ath` ≥ `atl` quand les deux existent.
+- Aucun `ath` ni `atl` sous 1 $ ou au-dessus de 15 000 $ (v4).
 - Compte des changements par rapport à la version publiée (ATH, ATL, points
   de courbe retirés, jours marqués suspects), donné à Preda avant le go.
 

@@ -120,3 +120,16 @@ def test_comparer_ecrit_le_fichier_floors_jour(tmp_path):
     assert lignes[0] == "veve_uuid,date,floor,floor_suspect"
     assert lignes[1:] == ["abc,2026-01-01,10,", "abc,2026-01-03,12,"]
     assert res["floors_jour.lignes"] == 2
+
+
+def test_v4_au_dessus_de_15000_jamais_meme_des_semaines():
+    """CONTRAT v4 (Preda, 28/11/2026) : au-dessus de 15 000 $, jamais (Grenade Blue)."""
+    jours = [(D(2025, 11, k), 3000.0) for k in range(1, 20)] + \
+        [(D(2025, 11, k), 160000.0) for k in range(20, 30)] + [(D(2025, 11, 30), 1499.0)]
+    _, ath, athd, atl, _ = R.appliquer(jours)
+    assert ath == 3000.0 and atl == 1499.0
+
+
+def test_v4_a_15000_pile_compte():
+    _, ath, _, _, _ = R.appliquer([(D(2026, 11, 1), 15000.0)])
+    assert ath == 15000.0
