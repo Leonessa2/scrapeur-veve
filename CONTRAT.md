@@ -1,10 +1,12 @@
-# CONTRAT — v1 (28/11/2026)
+# CONTRAT — v2 (28/11/2026)
 
 > Ce que le Scrapeur publie et comment le lire. **Fait foi pour tous les
 > projets du réseau VeVe.** Toute modification = nouvelle version, annoncée,
 > jamais en silence ; on ajoute des champs, on n'en retire pas sans prévenir.
 >
 > Journal :
+> - v2 (28/11/2026, go de Preda) : bannières de l'accueil de veve.me
+>   (section 5), ajout pur, rien ne change pour les fichiers de la v1.
 > - v1 (28/11/2026, go de Preda) : point décimal dans `prices-full` ; nombre
 >   d'offres vide = inconnu ; règle du floor du jour, des floors suspects et
 >   des ATH/ATL, fichier « floor du jour » ; onglet `📝C-BLOG`.
@@ -215,4 +217,39 @@ plus tard au passage du lendemain.
 - D'après Preda, la plupart des articles sont **déjà adaptés** sur
   vevefrance.fr, souvent **sous un autre titre**. Pour repérer un article déjà
   adapté, **comparer le texte (`content`)**, pas le titre.
+
+## 5. Bannières VeVe (v2, décision de Preda du 28/11/2026)
+
+> Décor pour les sites (VeVe France d'abord), **sans suivi** : pas
+> d'historique, pas de dates de début et de fin.
+
+**Où** : release `bannieres` de `Leonessa2/jetonveve`, deux fichiers :
+- `bannieres.csv` : **seulement les bannières affichées sur l'accueil de
+  www.veve.me au moment de la collecte**. Le fichier est **remplacé** à chaque
+  collecte.
+- `bannieres.json` : `{"collecte": "AAAA-MM-JJTHH:MM:SSZ", "lignes": …,
+  "sha256": …, "source": "https://www.veve.me/"}` (date de collecte en UTC ;
+  `sha256` = empreinte de `bannieres.csv`).
+
+**Quand** : une lecture par jour (`bannieres.yml` de jetonveve, prévu à 06:41
+UTC ; GitHub peut retarder).
+
+| Colonne | Contenu |
+|---|---|
+| `position` | Place dans le carrousel de VeVe, nombre entier ; afficher par ordre croissant. Les numéros peuvent sauter (le 28/11 : 1, 3, 4, 5, 6, 9, 10). |
+| `image_ordinateur` | Adresse complète (`https://…`) de l'image pour ordinateur |
+| `image_mobile` | Adresse complète (`https://…`) de l'image pour mobile |
+| `lien` | Adresse complète (`https://…`) où mène la bannière ; peut être vide |
+
+**Règles**
+- Si la page est illisible ou n'a aucune bannière, **rien n'est publié** : la
+  release garde la liste d'avant, et le filet de jetonveve donne l'alerte.
+- Quand VeVe n'affiche que sa bannière « de secours », c'est elle qui est
+  dans la liste.
+- Les images s'affichent directement depuis l'adresse de VeVe (vérifié : ça
+  fonctionne), sans les stocker. Le texte des bannières est dans l'image, en
+  anglais.
+
+**Première collecte** : 28/11/2026 à 05:30 UTC (jetonveve run 46112401590),
+**7 bannières**.
 
