@@ -5,6 +5,20 @@
 
 """📅 LE CALENDRIER DES DROPS, POSTE CHAQUE SAMEDI — une image par marque.
 
+🆕 HUB-PREDABOT v2 (28/11/2026, projet Bot Discord) — deux changements,
+invisibles dans le post (texte et image restent ceux d'avant, choix de Preda) :
+  1. **PAS DE CALENDRIER VIDE.** Du 31/10 au 21/11, le catalogue du Sheet
+     n'etait plus mis a jour (daily.yml en panne du 30/09 au 26/11) : le module
+     a publie des calendriers a 3, 0, 0 et 0 drop sans rien dire. En dessous de
+     `DISCORD_CALENDRIER_MIN` series (20) sur 5 semaines, il ne poste RIEN et
+     sort en erreur : c'est un capteur en panne, pas une semaine calme.
+  2. **UN ECHEC D'ENVOI N'EST PLUS UNE PERTE SECHE.** VeVe France a recu une
+     504 de Discord 4 samedis sur 9 (10/10, 17/10, 31/10, 21/11) : son
+     calendrier sautait. Apres un echec, le module regarde si le message est
+     quand meme arrive (jeton du bot, lecture des derniers messages du salon) :
+     arrive -> on l'adopte ; absent -> UN nouvel essai ; impossible a verifier
+     -> on ne retente PAS (un doublon est pire qu'un trou) et on le dit.
+
 Le module fabrique le PNG avec `outils/calendrier/` (le meme moteur que la
 commande manuelle) et le **televerse** dans le salon de CHAQUE marque, avec son
 propre webhook, sa propre langue et sa propre identite.
@@ -61,6 +75,8 @@ STATE_PATH = os.environ.get("DISCORD_CALENDRIER_STATE",
                             os.path.join("data", "discord_calendrier_state.json"))
 JOUR = int(os.environ.get("DISCORD_CALENDRIER_JOUR", "5"))      # 5 = samedi
 SEMAINES = int(os.environ.get("DISCORD_CALENDRIER_SEMAINES", "5"))
+# HUB-PREDABOT v2 : en dessous, le catalogue est en retard -> on ne poste pas.
+MINIMUM = int(os.environ.get("DISCORD_CALENDRIER_MIN", "20"))
 FORCE = os.environ.get("DISCORD_CALENDRIER_FORCE", "").strip().lower() == "true"
 MARQUES = [m.strip() for m in
            os.environ.get("DISCORD_CALENDRIER_MARQUES",
@@ -168,6 +184,75 @@ def fabriquer(th, calendrier: Dict, dossier: str, aujourdhui: _dt.date,
     return chemin
 
 
+# ------------------------------------------------- HUB-PREDABOT v2 : l'envoi
+
+def deja_arrive(wh: str, nom: str) -> Optional[str]:
+    """Apres un echec : le message est-il QUAND MEME arrive dans le salon ?
+
+    Rend l'id du message trouve, "" s'il n'y est pas, None si on ne PEUT PAS
+    savoir (pas de jeton de bot, bot absent du salon, Discord muet).
+
+    ⚠️ Pourquoi la question se pose : une 504 de Discord veut dire « je n'ai pas
+    repondu a temps », pas « je n'ai rien fait ». Le message peut etre parti
+    (lecon « Read timed out » du Hub : adopter, ne pas reposter). Un webhook ne
+    sait pas lister ses messages ; le BOT, lui, sait lire le salon.
+    On cherche : un message de CE webhook, portant CE fichier (le nom contient
+    la marque et la date du jour), parmi les 15 derniers."""
+    import requests
+    jeton = os.environ.get("DISCORD_BOT_TOKEN", "").strip()
+    if not jeton or not wh:
+        return None
+    try:
+        r = requests.get(wh.split("?")[0], timeout=20)
+        if r.status_code != 200:
+            return None
+        info = r.json()
+        salon, wid = info.get("channel_id"), str(info.get("id") or "")
+        r = requests.get("https://discord.com/api/v10/channels/%s/messages"
+                         % salon, params={"limit": 15}, timeout=20,
+                         headers={"Authorization": "Bot " + jeton})
+        if r.status_code != 200:
+            return None
+        for m in r.json():
+            if str(m.get("webhook_id") or "") != wid:
+                continue
+            if any((a.get("filename") or "") == nom
+                   for a in m.get("attachments") or []):
+                return str(m.get("id"))
+        return ""
+    except Exception:                                       # noqa: BLE001
+        return None
+
+
+def poster_sans_doublon(wh: str, thread: str, payload: Dict, chemin: str,
+                        nom: str, cle: str, pause: float = 20.0) -> Optional[str]:
+    """Un envoi, et au plus UN second — jamais deux messages.
+
+    1er essai rate -> on attend, on regarde si le message est arrive :
+      * arrive        -> on adopte son id (rien n'est reposte) ;
+      * pas arrive    -> un second essai, un seul ;
+      * impossible de savoir -> PAS de second essai. Un trou se rattrape a la
+        main ; un doublon devant tout le salon, non."""
+    mid = api.poster_fichier(wh, thread, payload, chemin, nom=nom)
+    if mid:
+        return mid
+    time.sleep(pause)
+    vu = deja_arrive(wh, nom)
+    if vu:
+        print("calendrier/%s : l'envoi a repondu en erreur mais le message EST "
+              "arrive (%s) — adopte, rien n'est reposte." % (cle, vu), flush=True)
+        return vu
+    if vu is None:
+        print("calendrier/%s : envoi en erreur, et impossible de verifier s'il "
+              "est arrive (jeton du bot absent ou salon illisible) — on ne "
+              "retente PAS, pour ne pas risquer un doublon. A verifier a la "
+              "main dans le salon." % cle, file=sys.stderr)
+        return None
+    print("calendrier/%s : envoi en erreur et message absent du salon — un "
+          "second essai, le dernier." % cle, flush=True)
+    return api.poster_fichier(wh, thread, payload, chemin, nom=nom)
+
+
 # ------------------------------------------------------------------------ main
 
 def _publier_une_marque(cle: str, grille: Dict, dossier: str,
@@ -205,7 +290,7 @@ def _publier_une_marque(cle: str, grille: Dict, dossier: str,
               flush=True)
         return 0
 
-    mid = api.poster_fichier(wh, thread, payload, chemin, nom=nom)
+    mid = poster_sans_doublon(wh, thread, payload, chemin, nom, cle)
     if not mid:
         print("calendrier/%s : ECHEC de la publication — l'etat n'est PAS "
               "ecrit, on retentera." % cle, file=sys.stderr)
@@ -236,11 +321,23 @@ def run() -> int:
 
     # ⭐ UNE SEULE lecture du Sheet pour TOUTES les marques (cf. `fabriquer`).
     debut, fin = D.fenetre(aujourdhui, semaines=SEMAINES)
-    calendrier = D.grouper(D.lignes_sheet(), debut, fin)
+    lignes = D.lignes_sheet()
+    calendrier = D.grouper(lignes, debut, fin)
     grille = {"calendrier": calendrier, "debut": debut, "fin": fin,
               "total": sum(j.nb for j in calendrier.values())}
     print("calendrier : fenetre %s → %s · %d drops (maille serie)"
           % (debut, fin, grille["total"]), flush=True)
+
+    # HUB-PREDABOT v2 — garde-fou des donnees : un calendrier presque vide est
+    # le signe d'un catalogue en retard, pas d'un mois calme (vecu du 31/10 au
+    # 21/11 : 3, 0, 0 et 0 drop publies).
+    if grille["total"] < MINIMUM:
+        print("::error::calendrier : seulement %d serie(s) sur %d semaines "
+              "(minimum %d) — le catalogue du Sheet est sans doute en retard. "
+              "RIEN n'est poste, aucune semaine n'est marquee. "
+              "(DISCORD_CALENDRIER_MIN pour changer le seuil.)"
+              % (grille["total"], SEMAINES, MINIMUM), file=sys.stderr)
+        return 1
 
     # ⚠️ `load_state` avec un webhook vide SAUTE le controle d'empreinte : il y a
     # DEUX webhooks ici, l'empreinte est donc verifiee marque par marque, plus

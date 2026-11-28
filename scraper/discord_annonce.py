@@ -5,6 +5,16 @@
 
 """📢 L'ANNONCE DE DEBUT DE MOIS — le 2 de chaque mois, dans « Annonces ».
 
+🆕 HUB-PREDABOT v2 (28/11/2026, projet Bot Discord) — trois changements :
+  1. **PAS DE BILAN SUR UN CATALOGUE EN PANNE.** Le 03/11, le bilan d'octobre
+     est parti avec « 2 Drops » : le catalogue du Sheet ne recevait plus les
+     nouveautes depuis le 30/09. En dessous de `DISCORD_ANNONCE_MIN_DROPS` (10)
+     drops dans le mois, RIEN n'est poste et le module sort en erreur.
+  2. **« le mois VeVe » N'EST PAS UN THEME.** VeVe est la maison, pas une
+     licence : elle ne peut pas « gagner » le theme du mois (repli neutre).
+  3. Les noms sont nettoyes (« Mach 5 and Shooting Star␣ »).
+  L'affiche et la mise en page restent celles d'avant (choix de Preda).
+
 La newsletter sort le 1er ; l'annonce vient juste apres.
 
 DEUX MESSAGES, EN TEXTE — **PAS D'EMBED** (« l'embed rend mal », Preda 04/08) :
@@ -227,6 +237,19 @@ def emoji() -> str:
 
 def seuil_theme() -> float:
     return float(os.environ.get("DISCORD_ANNONCE_SEUIL_THEME", "0.40"))
+
+
+def min_drops() -> int:
+    """HUB-PREDABOT v2 : sous ce nombre de drops dans le mois, le catalogue est
+    en retard (bilan d'octobre publie avec « 2 Drops » le 03/11)."""
+    try:
+        return int(os.environ.get("DISCORD_ANNONCE_MIN_DROPS", "10"))
+    except ValueError:
+        return 10
+
+
+# HUB-PREDABOT v2 : la maison n'est pas un theme (« le mois VeVe »).
+PAS_UN_THEME = {"veve", "veve digital collectibles", "ecomi"}
 
 
 def couverture_min() -> int:
@@ -563,7 +586,7 @@ def theme(selection: List[Dict[str, Any]]) -> str:
     combien: Dict[str, int] = {}
     for d in selection:
         nom = (d.get("licence") or d.get("marque") or "").strip()
-        if not nom:
+        if not nom or nom.lower() in PAS_UN_THEME:      # HUB-PREDABOT v2
             continue
         poids[nom] = poids.get(nom, 0) + d.get("ventes", 0)
         combien[nom] = combien.get(nom, 0) + 1
@@ -643,7 +666,7 @@ def ligne_sortie(i: int, d: Dict[str, Any]) -> str:
 
     Le lien vit DANS le nom (demande de Preda) — `dd._lien` sait quel uuid
     ouvre quelle page : un craft s'ouvre par son ELEMENT, pas par sa serie."""
-    nom = d.get("nom") or "(sans nom)"
+    nom = (d.get("nom") or "").strip() or "(sans nom)"     # HUB-PREDABOT v2
     ligne = f"{i}. {_lien_nomme(nom, dd._lien(d))}"
     detail = f"≈ {_fr(d['ventes'])} vendus"
     # ⛔ LE MEME NOMBRE QUE LE FILTRE, TOUJOURS. Ecrire « sur 10 000 » puis
@@ -666,7 +689,7 @@ def ligne_sortie(i: int, d: Dict[str, Any]) -> str:
 def ligne_a_venir(d: Dict[str, Any]) -> str:
     """`<t:…:D>` : Discord affiche la date dans le fuseau de CHAQUE lecteur —
     personne n'a rien a convertir."""
-    nom = d.get("nom") or "(sans nom)"
+    nom = (d.get("nom") or "").strip() or "(sans nom)"     # HUB-PREDABOT v2
     quand = f"<t:{d['ts']}:D>" if d.get("ts") else d.get("jour", "")
     return f"• {_lien_nomme(nom, dd._lien(d))} — {quand}"
 
@@ -1001,6 +1024,13 @@ def run() -> int:
         return 1
 
     total_drops = compter_drops(series)
+    if total_drops < min_drops():                          # HUB-PREDABOT v2
+        print(f"::error::annonce : seulement {total_drops} drop(s) en {cle} "
+              f"(minimum {min_drops()}) — le catalogue du Sheet est sans doute "
+              f"en retard. RIEN n'est poste, le mois n'est pas marque. "
+              f"(DISCORD_ANNONCE_MIN_DROPS pour changer le seuil.)",
+              file=sys.stderr)
+        return 1
     eligibles = retenir(classer(series, ventes))
     selection = eligibles[:max_lignes()]
     if not selection:
