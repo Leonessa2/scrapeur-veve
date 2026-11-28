@@ -33,6 +33,8 @@ jobs:
         env:
           FLOORS_JOUR: floors_jour.csv.gz
         run: python -m scraper.regle_floors prices.csv.gz catalogue.csv.gz "$(date -u +%F)"
+      - name: Offres qui passeraient a vide (rien n'est publie)
+        run: python -m scraper.compte_offres catalogue.csv.gz prices.csv.gz data/elements.csv
       - name: Taille du fichier floor du jour (rien n'est publie)
         run: |
           for f in prices.csv.gz floors_jour.csv.gz; do
