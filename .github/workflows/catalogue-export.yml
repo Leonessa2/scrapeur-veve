@@ -39,7 +39,7 @@ jobs:
     #    -> nouveaux ATH/ATL. "1" = allume. Retour arriere : remettre "0" et
     #    republier depuis les releves `-prev`.
     env:
-      CONTRAT_OFFRES_VIDES: "0"
+      CONTRAT_OFFRES_VIDES: "1"
       CONTRAT_FLOORS_JOUR: "0"
       CONTRAT_ATH_ATL: "0"
     steps:
