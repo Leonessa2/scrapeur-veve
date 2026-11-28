@@ -108,3 +108,41 @@ def test_v41_floor_15000_ou_plus_vide(tmp_path):
     assert rows["a"]["floor"] == "" and rows["a"]["ath"] == "" and rows["a"]["ath_brut"] == "15000"
     assert rows["b"]["floor"] == "14999,99"
     assert n["floor_vide_15000_ou_plus"] == 1 and not n.get("controle_floor_15000_ou_plus")
+
+
+def test_v42_atl_suit_ath(tmp_path, monkeypatch):
+    import csv, gzip, datetime as dt
+    from scraper import contrat_appliquer as C
+    cat = tmp_path / "c.csv.gz"; prix = tmp_path / "p.csv.gz"
+    for nom, ent in (("v.csv", "veve_id,ts_utc,element_id,price_usd\n"),
+                     ("s.csv", "id,ts_utc,element_id,price_omi\n"),
+                     ("c.csv", "element_id,ts_utc,marche,price_usd,price_omi\n")):
+        (tmp_path / nom).write_text(ent)
+    monkeypatch.setenv("CONTRAT_VENTES_VEVE", str(tmp_path / "v.csv"))
+    monkeypatch.setenv("CONTRAT_VENTES_STACKR", str(tmp_path / "s.csv"))
+    monkeypatch.setenv("CONTRAT_COURS_OMI", str(tmp_path / "c.csv"))
+    with gzip.open(cat, "wt", encoding="utf-8", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["uuid", "kind", "release_date", "floor", "listings", "ath", "atl", "ath_date", "atl_date"])
+        # tracker : ATL 70 hors periode couverte, notre ATH tombe a 40
+        w.writerow(["a", "Collectible", "01/11/2026", "40", "", "", "70", "", "2026-10-01"])
+    with gzip.open(prix, "wt", encoding="utf-8", newline="") as f:
+        f.write("veve_uuid,ts_utc,floor\na,2026-11-20T00:00:00,40\n")
+    now = dt.datetime(2026, 11, 28, 9)
+    n = C.appliquer_catalogue(str(cat), str(prix), str(tmp_path / "o"), now.date(), now, True, True, True)
+    r = next(csv.DictReader(gzip.open(tmp_path / "o" / "catalogue.csv.gz", "rt", encoding="utf-8")))
+    assert r["ath"] == "40" and r["atl"] == "40" and not n.get("controle_atl_au_dessus_ath")
+
+
+import pytest
+
+
+@pytest.fixture(autouse=True)
+def _ventes_vides(tmp_path, monkeypatch):
+    """v4.2 : la publication exige les fichiers de ventes ; ici, des fichiers vides."""
+    for nom, ent, var in (("_v.csv", "veve_id,ts_utc,element_id,price_usd\n", "CONTRAT_VENTES_VEVE"),
+                          ("_s.csv", "id,ts_utc,element_id,price_omi\n", "CONTRAT_VENTES_STACKR"),
+                          ("_c.csv", "element_id,ts_utc,marche,price_usd,price_omi\n", "CONTRAT_COURS_OMI")):
+        (tmp_path / nom).write_text(ent)
+        if not __import__("os").environ.get(var, "").startswith(str(tmp_path)):
+            monkeypatch.setenv(var, str(tmp_path / nom))

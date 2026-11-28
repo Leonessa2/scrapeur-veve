@@ -152,6 +152,16 @@ def appliquer(jours: List[Tuple[dt.date, Optional[float]]]):
         marques.append((j, f, suspect))
         hist.append(f)
         hist_j.append(j)
+    valides = candidats(marques)
+    if not valides:
+        return marques, None, None, None, None
+    ath = max(valides, key=lambda v: (v[0], -v[1].toordinal()))
+    atl = min(valides, key=lambda v: (v[0], v[1].toordinal()))
+    return marques, ath[0], ath[1], atl[0], atl[1]
+
+
+def candidats(marques) -> List[Tuple[float, dt.date]]:
+    """Floors du jour valides (v4.1) : (valeur, jour)."""
     valides = []
     debut_serie = 0                 # indice du 1er jour de la serie de meme floor
     for i, (j, f, s) in enumerate(marques):
@@ -167,11 +177,38 @@ def appliquer(jours: List[Tuple[dt.date, Optional[float]]]):
         if i - debut_serie + 1 == JOURS_SUSPECT:
             # suspect, mais floor du jour assez de jours de suite : compte, date = 1er jour
             valides.append((f, marques[debut_serie][0]))
-    if not valides:
-        return marques, None, None, None, None
-    ath = max(valides, key=lambda v: (v[0], -v[1].toordinal()))
-    atl = min(valides, key=lambda v: (v[0], v[1].toordinal()))
-    return marques, ath[0], ath[1], atl[0], atl[1]
+    return valides
+
+
+# ─────────────── CONTRAT v4.2 : garde-fous de l'ATH (Preda, 28/11/2026) ───────────────
+VENTES_DEBUT = dt.date(2026, 7, 31)     # nos ventes en dollars commencent la
+LIMITE_DEBUT = dt.date(2023, 1, 1)      # avant : aucune limite (sommets 2021-2022)
+X_REFERENCE = 3.0                        # apres le 31/07 : <= 3 x reference
+X_FLOOR_ACTUEL = 100.0                   # 01/01/2023 -> 30/07/2026 : <= 100 x floor actuel
+X_VENTE_FLOOR = 20.0                     # une vente > 20 x le floor du jour n'est pas une reference
+
+
+def reference_ventes(ventes, jours: Dict[dt.date, Optional[float]]) -> Optional[float]:
+    """Plus haute vente reelle fiable (1 $ <= prix < 15 000 $, et pas plus de
+    20 x le floor du jour de sa date)."""
+    bonnes = []
+    for d, p in ventes:
+        if p is None or not (PLANCHER <= p < PLAFOND):
+            continue
+        fj = jours.get(d)
+        if fj and p > X_VENTE_FLOOR * fj:
+            continue
+        bonnes.append(p)
+    return max(bonnes) if bonnes else None
+
+
+def ath_plausible(f: float, j: Optional[dt.date], ref: Optional[float],
+                  floor_actuel: Optional[float]) -> bool:
+    if j is not None and j < LIMITE_DEBUT:
+        return True
+    if j is not None and j >= VENTES_DEBUT:
+        return not (ref and f > X_REFERENCE * ref)
+    return not (floor_actuel and f > X_FLOOR_ACTUEL * floor_actuel)
 
 
 # ─────────────────────────────── la sonde ───────────────────────────────────

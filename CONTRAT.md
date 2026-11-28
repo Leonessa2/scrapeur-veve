@@ -1,10 +1,16 @@
-# CONTRAT — v4.1 (28/11/2026)
+# CONTRAT — v4.2 (28/11/2026)
 
 > Ce que le Scrapeur publie et comment le lire. **Fait foi pour tous les
 > projets du réseau VeVe.** Toute modification = nouvelle version, annoncée,
 > jamais en silence ; on ajoute des champs, on n'en retire pas sans prévenir.
 >
 > Journal :
+> - v4.2 (28/11/2026, go de Preda) : section 3.3 — garde-fous de l'**ATH**
+>   (toujours le plus haut floor du jour valide) : après le 31/07/2026, rien
+>   au-dessus de **3 ×** la référence (plus haute vente réelle fiable ou floor
+>   actuel) ; du 01/01/2023 au 30/07/2026, rien au-dessus de **100 ×** le floor
+>   actuel ; avant 2023, aucune limite ; l'**ATL suit l'ATH** quand l'ATH passe
+>   dessous. Contrôle bloquant étendu. Mêmes colonnes.
 > - v4.1 (28/11/2026, accord de Preda) : le seuil devient **« 15 000 $ ou
 >   plus »** : un floor à 15 000 $ pile ne compte plus pour l'ATH/ATL, une
 >   valeur du tracker gardée doit être sous 15 000 $ ; dans `catalogue`, la
@@ -125,6 +131,21 @@ critères (1 $ et 15 000 $) s'appliquent.
   Conséquence voulue : une fiche dont le floor dépasse vraiment 15 000 $ a un
   `ath` plus bas que ce floor (le floor réel reste visible dans le fichier
   « floor du jour », marqué suspect).
+- **Garde-fous de l'ATH (v4.2)** — un floor du jour valide (ou un ATH du
+  tracker gardé) ne compte pour l'ATH que s'il est plausible :
+  - daté du **31/07/2026 ou après** (période de nos ventes en dollars) : pas
+    plus de **3 ×** la référence = la plus haute de deux valeurs : plus haute
+    vente réelle de la fiche entre 1 $ et 15 000 $, et floor actuel. Une
+    vente à plus de **20 ×** le floor du jour de sa date ne sert pas de
+    référence ;
+  - daté du **01/01/2023 au 30/07/2026** : pas plus de **100 ×** le floor
+    actuel ;
+  - daté d'**avant le 01/01/2023** : aucune limite (vrais sommets 2021-2022).
+  - Ventes utilisées : marché VeVe (`data/veve_ventes.csv`, gems ≈ $) et
+    StackR (`data/stackr_sales.csv`, OMI × cours du jour) ; sans cours, la
+    vente StackR ne compte pas.
+- **L'ATL suit l'ATH** : si l'ATL calculé est au-dessus de l'ATH, l'ATL prend
+  la valeur et la date de l'ATH (v4.2). L'ATL ne change pas autrement.
 - `ath_date` / `atl_date` = le jour de ce floor. Jamais après la date de
   collecte, jamais avant la date de sortie.
 - **Valeur du tracker (my-nft-tracker) : quand on la garde.** Notre historique
@@ -163,6 +184,9 @@ critères (1 $ et 15 000 $) s'appliquent.
 - `ath` ≥ `atl` quand les deux existent.
 - Aucun `ath` ni `atl` sous 1 $ ou à 15 000 $ ou plus, aucun `floor` à
   15 000 $ ou plus dans `catalogue` (v4.1) : sinon rien n'est publié.
+- Aucun `ath` ≥ 10 000 $ et ≥ 100 × le `floor` actuel, sauf un ATH daté
+  d'avant le 01/01/2023 (v4.2) ; aucun `atl` au-dessus de l'`ath` ; fichiers de
+  ventes présents : sinon rien n'est publié.
 - Compte des changements par rapport à la version publiée (ATH, ATL, points
   de courbe retirés, jours marqués suspects), donné à Preda avant le go.
 

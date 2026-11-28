@@ -1,4 +1,4 @@
-"""Applique CONTRAT.md v4.1 (sections 2, 3.3 et 3.7) au catalogue du jour, AVANT sa
+"""Applique CONTRAT.md v4.2 (sections 2, 3.3 et 3.7) au catalogue du jour, AVANT sa
 publication par catalogue-export.yml. Trois interrupteurs, tous eteints par
 defaut (go de Preda du 28/11/2026, publication dans l'ordre de la section 3.8) :
 
@@ -33,7 +33,42 @@ def _allume(nom: str) -> bool:
     return os.environ.get(nom, "0").strip() == "1"
 
 
-def decider(p, r, collecte: dt.date):
+def charger_ventes() -> dict:
+    """CONTRAT v4.2 : ventes reelles en dollars par fiche -> {uuid: [(jour, $)]}.
+    VeVe : `data/veve_ventes.csv` (gems ~ $). StackR : `data/stackr_sales.csv`
+    (OMI) x cours du jour, deduit de `ventes_stackr.csv` (release
+    etat-ventes-stackr, deja converti au cours gate.io). Jamais de cours voisin."""
+    fv = os.environ.get("CONTRAT_VENTES_VEVE", "data/veve_ventes.csv")
+    fs = os.environ.get("CONTRAT_VENTES_STACKR", "data/stackr_sales.csv")
+    fc = os.environ.get("CONTRAT_COURS_OMI", "contrat_src/ventes_stackr.csv")
+    for f in (fv, fs, fc):
+        if not os.path.exists(f):
+            raise SystemExit(f"[contrat] ⛔ fichier de ventes absent : {f} — rien ne doit etre publie.")
+    import statistics
+    taux = {}
+    with open(fc, encoding="utf-8", newline="") as f:
+        for x in csv.DictReader(f):
+            u, o = R.nombre(x.get("price_usd")), R.nombre(x.get("price_omi"))
+            if x.get("marche") == "stackr" and u and o:
+                taux.setdefault(x["ts_utc"][:10], []).append(u / o)
+    taux = {d: statistics.median(v) for d, v in taux.items()}
+    ventes = {}
+    with open(fv, encoding="utf-8", newline="") as f:
+        for x in csv.DictReader(f):
+            p = R.nombre(x.get("price_usd"))
+            d = R.date_libre(x.get("ts_utc"))
+            if p is not None and d:
+                ventes.setdefault(x["element_id"].strip().lower(), []).append((d, p))
+    with open(fs, encoding="utf-8", newline="") as f:
+        for x in csv.DictReader(f):
+            o = R.nombre(x.get("price_omi"))
+            j = (x.get("ts_utc") or "")[:10]
+            if o is not None and j in taux:
+                ventes.setdefault(x["element_id"].strip().lower(), []).append((R.date_libre(j), o * taux[j]))
+    return ventes
+
+
+def decider(p, r, collecte: dt.date, ventes=None, floor_actuel=None):
     """Une fiche -> (marques du jour, {'ath': (v, d), 'atl': (v, d)}) selon la
     regle decidee (floor tenu le plus longtemps + tracker garde hors periode
     couverte, entre 1 $ et 15 000 $). Meme logique que `regle_floors.comparer`
@@ -46,6 +81,16 @@ def decider(p, r, collecte: dt.date):
     dedans = any(R.TROU_DEBUT <= t.date() <= R.TROU_FIN for t, _ in p)
     comic = (r.get("kind") or "").strip().lower() == "comic"
     sans_trou = dedans or not avant or not comic
+    # v4.2 : l'ATH ne retient que les floors du jour plausibles
+    jd = dict(jours)
+    ref_v = R.reference_ventes(ventes or [], jd)
+    ref = max([v for v in (ref_v, floor_actuel) if v] or [0]) or None
+    cand = [(f, j) for f, j in R.candidats(marques) if R.ath_plausible(f, j, ref, floor_actuel)]
+    if cand:
+        m = max(cand, key=lambda v: (v[0], -v[1].toordinal()))
+        ath, athd = m
+    else:
+        ath, athd = None, None
     regle = {"ath": (ath, athd), "atl": (atl, atld)}
     act = {"ath": (R.nombre(r.get("ath")) or None, R.date_libre(r.get("ath_date"))),
            "atl": (R.nombre(r.get("atl")) or None, R.date_libre(r.get("atl_date")))}
@@ -53,7 +98,14 @@ def decider(p, r, collecte: dt.date):
     for k in ("ath", "atl"):
         a, ad = act[k]
         per = R._periode_couverte(ad, premier, sans_trou, collecte)
-        out[k] = (a, ad) if R.garder_tracker(a, per) else regle[k]
+        garder = R.garder_tracker(a, per)
+        if garder and k == "ath":
+            garder = R.ath_plausible(a, ad, ref, floor_actuel)
+        out[k] = (a, ad) if garder else regle[k]
+    # v4.2 : l'ATL suit l'ATH quand l'ATH passe dessous
+    va, vl = out["ath"][0], out["atl"][0]
+    if va is not None and vl is not None and vl > va:
+        out["atl"] = out["ath"]
     return marques, out, act
 
 
@@ -72,6 +124,9 @@ def appliquer_catalogue(cat_in: str, prix: str, dossier: str, collecte: dt.date,
     cle = "uuid" if "uuid" in entete else "veve_uuid"
     n["fiches"] = len(lignes)
     pts = R.lire_points(prix) if (floors or athatl) else {}
+    ventes = charger_ventes() if athatl else None
+    if ventes is not None:
+        n["ventes.fiches"] = len(ventes)
     fj_lignes = []
     for r in lignes:
         u = (r.get(cle) or "").strip().lower()
@@ -115,7 +170,8 @@ def appliquer_catalogue(cat_in: str, prix: str, dossier: str, collecte: dt.date,
         if not p:
             n["fiches_sans_releve"] += 1
             continue
-        marques, fin, act = decider(p, r, collecte)
+        marques, fin, act = decider(p, r, collecte, ventes.get(u, []) if ventes is not None else None,
+                                    f_jour if f_jour and f_jour > 0 else None)
         if floors:
             for j, f_, s_ in R.lignes_changement(marques):
                 fj_lignes.append((u, j.isoformat(), f_, s_))
@@ -149,6 +205,14 @@ def appliquer_catalogue(cat_in: str, prix: str, dossier: str, collecte: dt.date,
                 v = R.nombre(r.get(k))
                 if v is not None and not (R.PLANCHER <= v < R.PLAFOND):
                     n["controle_hors_seuils"] += 1
+            va, fl = R.nombre(r.get("ath")), R.nombre(r.get("floor"))
+            d_a = R.date_libre(r.get("ath_date"))
+            if va is not None and fl and va >= 10000 and va >= 100 * fl \
+                    and not (d_a and d_a < R.LIMITE_DEBUT):
+                n["controle_ath_10000_100x"] += 1       # v4.2 : test de Preda, bloquant (hors ATH d'avant 2023)
+            vl = R.nombre(r.get("atl"))
+            if va is not None and vl is not None and vl > va:
+                n["controle_atl_au_dessus_ath_final"] += 1
     if floors or athatl:
         # v4.1 : floor actuel a 15 000 $ ou plus -> vide dans `catalogue` (apres le
         # calcul du floor du jour, qui garde le releve reel et le marque suspect).

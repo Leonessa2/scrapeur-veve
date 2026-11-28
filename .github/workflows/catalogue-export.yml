@@ -89,6 +89,10 @@ jobs:
             # ⛔ sans historique des prix, pas de regle : le job s'arrete (rien publie).
             gh release download prices-full -R Leonessa2/jetonveve -p prices.csv.gz -D contrat_src --clobber
           fi
+          if [ "${CONTRAT_ATH_ATL}" = "1" ]; then
+            # v4.2 : cours OMI du jour (ventes StackR converties). Absent -> arret (rien publie).
+            gh release download etat-ventes-stackr -R Leonessa2/scrapeur-veve -p ventes_stackr.csv -D contrat_src --clobber
+          fi
           [ -f contrat_src/prices.csv.gz ] || printf 'veve_uuid,ts_utc,floor,listings\n' | gzip > contrat_src/prices.csv.gz
           python -m scraper.contrat_appliquer catalogue.csv.gz contrat_src/prices.csv.gz contrat
           cp contrat/catalogue.csv.gz catalogue.csv.gz

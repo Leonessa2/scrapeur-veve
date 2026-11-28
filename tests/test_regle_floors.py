@@ -138,3 +138,18 @@ def test_v41_a_15000_pile_ne_compte_pas():
     _, ath, _, _, _ = R.appliquer([(D(2026, 11, 1), 14999.99)])
     assert ath == 14999.99
     assert not R.garder_tracker(15000.0, "date_inconnue") and R.garder_tracker(14999.0, "date_inconnue")
+
+
+def test_v42_garde_fous_ath():
+    """CONTRAT v4.2 (Preda, 28/11/2026)."""
+    # apres le 31/07/2026 : pas plus de 3 x la reference
+    assert R.ath_plausible(3000.0, D(2026, 8, 15), 1000.0, 40.0)
+    assert not R.ath_plausible(3001.0, D(2026, 8, 15), 1000.0, 40.0)
+    # 2023 -> 30/07/2026 : pas plus de 100 x le floor actuel
+    assert R.ath_plausible(3000.0, D(2024, 11, 8), None, 30.0)
+    assert not R.ath_plausible(14999.0, D(2025, 7, 3), None, 30.0)
+    # avant 2023 : aucune limite (sommets 2021-2022)
+    assert R.ath_plausible(1642.0, D(2022, 1, 19), None, 7.0)
+    # une vente > 20 x le floor du jour n'est pas une reference (Barbarella)
+    j = {D(2026, 9, 27): 20.0}
+    assert R.reference_ventes([(D(2026, 9, 27), 10000.0), (D(2026, 9, 27), 25.0)], j) == 25.0
