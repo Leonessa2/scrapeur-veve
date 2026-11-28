@@ -31,6 +31,7 @@ LA REGLE (CONTRAT 3.1 a 3.3)
 from __future__ import annotations
 
 import bisect
+import os
 import csv
 import datetime as dt
 import gzip
@@ -208,13 +209,30 @@ def garder_tracker(valeur: Optional[float], periode: str) -> bool:
             and PLANCHER <= valeur <= PLAFOND)
 
 
+def _nombre_txt(f: Optional[float]) -> str:
+    return "" if f is None else ("%.6f" % f).rstrip("0").rstrip(".")
+
+
+def lignes_changement(marques):
+    """Fichier « floor du jour » : une ligne seulement quand le floor du jour ou
+    `floor_suspect` change (un jour sans ligne garde la valeur de la veille).
+    Rend [(jour, floor_txt, suspect_txt)] ; floor vide = pas d'offre."""
+    out, avant = [], object()
+    for j, f, s_ in marques:
+        cle = (_nombre_txt(f), "oui" if (s_ and f is not None) else "")
+        if cle != avant:
+            out.append((j, cle[0], cle[1]))
+            avant = cle
+    return out
+
+
 def _une_fiche(p, sortie, collecte, methode):
     jours = floors_du_jour(p, sortie, collecte, methode)
     return appliquer(jours)
 
 
 def comparer(prix: str, catalogue: str, collecte: dt.date, sortie_csv: str = "",
-             methodes=("mediane", "plus_long")) -> dict:
+             methodes=("mediane", "plus_long"), floors_jour: str = "") -> dict:
     pts = lire_points(prix)
     with gzip.open(catalogue, "rt", encoding="utf-8") as f:
         cat = list(csv.DictReader(f))
@@ -224,6 +242,11 @@ def comparer(prix: str, catalogue: str, collecte: dt.date, sortie_csv: str = "",
     dif = lambda a, b: (a is None) != (b is None) or (
         a is not None and b is not None and abs(a - b) > max(0.01, 0.005 * max(a, b)))
     ech = []
+    fj = None
+    if floors_jour:
+        fj = gzip.open(floors_jour, "wt", encoding="utf-8", newline="")
+        fj_w = csv.writer(fj, lineterminator="\n")
+        fj_w.writerow(["veve_uuid", "date", "floor", "floor_suspect"])
     for r in cat:
         u = (r.get(cle) or "").strip().lower()
         p = pts.get(u)
@@ -281,6 +304,13 @@ def comparer(prix: str, catalogue: str, collecte: dt.date, sortie_csv: str = "",
                 n[f"{m}.ath_ou_atl_change"] += 1
                 change_une = True
             ligne += [ath, athd, atl, atld, s_]
+            if m == "plus_long" and fj is not None:
+                lc = lignes_changement(marques)
+                n["floors_jour.lignes"] += len(lc)
+                n["floors_jour.fiches"] += 1 if lc else 0
+                n["floors_jour.lignes_suspectes"] += sum(1 for x in lc if x[2])
+                for j, f_, s_ in lc:
+                    fj_w.writerow([u, j.isoformat(), f_, s_])
             if m == "plus_long":
                 fin_ch = False
                 for k in ("ath", "atl"):
@@ -301,6 +331,8 @@ def comparer(prix: str, catalogue: str, collecte: dt.date, sortie_csv: str = "",
                     n["final.ath_ou_atl_change"] += 1
         if change_une and len(ech) < 2000:
             ech.append(ligne)
+    if fj is not None:
+        fj.close()
     if sortie_csv:
         with open(sortie_csv, "w", newline="", encoding="utf-8") as f:
             w = csv.writer(f)
@@ -315,6 +347,7 @@ def comparer(prix: str, catalogue: str, collecte: dt.date, sortie_csv: str = "",
 if __name__ == "__main__":
     prix, cat = sys.argv[1], sys.argv[2]
     coll = date_libre(sys.argv[3]) if len(sys.argv) > 3 else dt.date.today()
-    res = comparer(prix, cat, coll, "exemples_changements.csv")
+    res = comparer(prix, cat, coll, "exemples_changements.csv",
+                   floors_jour=os.environ.get("FLOORS_JOUR", ""))
     for k in sorted(res):
         print(f"[regle] {k} = {res[k]}")

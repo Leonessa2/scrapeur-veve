@@ -30,7 +30,21 @@ jobs:
           gh release view prices-full -R Leonessa2/jetonveve --json assets -q '.assets[] | select(.name=="prices.csv.gz") | .updatedAt'
           ls -lh *.csv.gz
       - name: Compter
+        env:
+          FLOORS_JOUR: floors_jour.csv.gz
         run: python -m scraper.regle_floors prices.csv.gz catalogue.csv.gz "$(date -u +%F)"
+      - name: Taille du fichier floor du jour (rien n'est publie)
+        run: |
+          for f in prices.csv.gz floors_jour.csv.gz; do
+            echo "[taille] $f lignes=$(zcat $f | tail -n +2 | wc -l) gz_octets=$(stat -c %s $f) brut_octets=$(zcat $f | wc -c)"
+          done
+          python - <<'P'
+          import csv, gzip, resource, time
+          t = time.time()
+          with gzip.open("floors_jour.csv.gz", "rt") as f:
+              lignes = list(csv.reader(f))
+          print(f"[taille] lecture_en_memoire_python lignes={len(lignes)-1} pic_Mo={resource.getrusage(resource.RUSAGE_SELF).ru_maxrss//1024} s={time.time()-t:.1f}")
+          P
       - uses: actions/upload-artifact@v4
         with:
           name: regle-floors-exemples-${{ github.run_id }}

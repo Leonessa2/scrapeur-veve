@@ -97,3 +97,26 @@ def test_garder_tracker_seuils():
     assert not g(0.5, "non_couverte_trou_comics")
     assert not g(20000.0, "non_couverte_date_future")
     assert not g(None, "date_inconnue")
+
+
+def test_lignes_changement_seulement_quand_ca_change():
+    m = [(D(2026, 1, 1), 10.0, False), (D(2026, 1, 2), 10.0, False),
+         (D(2026, 1, 3), 300.0, True), (D(2026, 1, 4), 300.0, False),
+         (D(2026, 1, 5), None, False), (D(2026, 1, 6), None, False)]
+    assert R.lignes_changement(m) == [
+        (D(2026, 1, 1), "10", ""), (D(2026, 1, 3), "300", "oui"),
+        (D(2026, 1, 4), "300", ""), (D(2026, 1, 5), "", "")]
+
+
+def test_comparer_ecrit_le_fichier_floors_jour(tmp_path):
+    import gzip as g
+    prix = tmp_path / "p.csv.gz"; cat = tmp_path / "c.csv.gz"; fj = tmp_path / "fj.csv.gz"
+    with g.open(prix, "wt") as f:
+        f.write("veve_uuid,ts_utc,floor,listings\nabc,2026-01-01T00:00:00Z,10,\nabc,2026-01-03T00:00:00Z,12,\n")
+    with g.open(cat, "wt") as f:
+        f.write("veve_uuid,name,ath,ath_date,atl,atl_date,release_date,kind\nabc,X,12,2026-01-03,10,2026-01-01,,collectible\n")
+    res = R.comparer(str(prix), str(cat), D(2026, 1, 5), floors_jour=str(fj))
+    lignes = g.open(fj, "rt").read().splitlines()
+    assert lignes[0] == "veve_uuid,date,floor,floor_suspect"
+    assert lignes[1:] == ["abc,2026-01-01,10,", "abc,2026-01-03,12,"]
+    assert res["floors_jour.lignes"] == 2
