@@ -1,0 +1,65 @@
+# ⚠️ DEPOT : Leonessa2/scrapeur-veve   ·   CHEMIN : .github/workflows/essai-contrat.yml
+#
+# 🧪 ESSAI SUR DES COPIES (go de Preda du 28/11/2026) : applique CONTRAT.md
+# (offres vides, floor du jour, ATH/ATL) a une COPIE du catalogue et de
+# prices-full de jetonveve, compte, et compare au recompte du 28/11 au matin
+# (seuil 5 %). ⛔ Ne publie rien : les fichiers restent en artefact.
+name: Essai du contrat sur des copies (sans publication)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  essayer:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Copier catalogue et prices-full (jetonveve, publics)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download catalogue -R Leonessa2/jetonveve -p catalogue.csv.gz
+          gh release download prices-full -R Leonessa2/jetonveve -p prices.csv.gz
+          gh release view catalogue -R Leonessa2/jetonveve --json assets -q '.assets[] | "\(.name) \(.updatedAt)"'
+          gh release view prices-full -R Leonessa2/jetonveve --json assets -q '.assets[] | "\(.name) \(.updatedAt)"'
+      - name: Appliquer le contrat (tout allume, sur les copies)
+        env:
+          CONTRAT_OFFRES_VIDES: "1"
+          CONTRAT_FLOORS_JOUR: "1"
+          CONTRAT_ATH_ATL: "1"
+        run: |
+          /usr/bin/time -v python -m scraper.contrat_appliquer catalogue.csv.gz prices.csv.gz sortie 2> temps.txt || { cat temps.txt; exit 1; }
+          grep -E "Maximum resident|Elapsed" temps.txt
+          ls -l sortie/
+      - name: Recompte contre le matin (seuil 5 %)
+        run: |
+          python - <<'P'
+          import csv, gzip, json, sys
+          n = json.load(open("sortie/compte.json"))
+          ref = {"offres_videes": 21470, "ath_ou_atl_change": 6708, "floors_jour.lignes": 1668081}
+          ko = False
+          for k, v in ref.items():
+              e = (n.get(k, 0) - v) / v * 100
+              print(f"[essai] {k} = {n.get(k, 0)} (matin {v}, ecart {e:+.2f} %)")
+              ko |= abs(e) > 5
+          a = list(csv.DictReader(gzip.open("catalogue.csv.gz", "rt", encoding="utf-8")))
+          b = list(csv.DictReader(gzip.open("sortie/catalogue.csv.gz", "rt", encoding="utf-8")))
+          print(f"[essai] lignes catalogue avant {len(a)} apres {len(b)} ; colonnes ajoutees {[c for c in b[0] if c not in a[0]]}")
+          print(f"[essai] listings non vides apres = {sum(1 for r in b if r['listings'])}")
+          ko |= len(a) != len(b)
+          print("[essai] RESULTAT :", "ECART > 5 % OU LIGNES PERDUES — ARRET" if ko else "OK (dans le seuil)")
+          sys.exit(1 if ko else 0)
+          P
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: essai-contrat-${{ github.run_id }}
+          path: sortie/
+          retention-days: 7

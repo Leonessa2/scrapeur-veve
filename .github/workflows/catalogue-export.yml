@@ -33,7 +33,15 @@ permissions:
 jobs:
   export:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 40
+    # 📜 CONTRAT.md (go de Preda du 28/11/2026) — trois interrupteurs, publies
+    #    un par un dans l'ordre de la section 3.8 : offres vides -> floors-jour
+    #    -> nouveaux ATH/ATL. "1" = allume. Retour arriere : remettre "0" et
+    #    republier depuis les releves `-prev`.
+    env:
+      CONTRAT_OFFRES_VIDES: "0"
+      CONTRAT_FLOORS_JOUR: "0"
+      CONTRAT_ATH_ATL: "0"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -68,6 +76,23 @@ jobs:
           fi
           python -m scraper.catalog_export
           ls -lh catalogue.csv.gz
+      - name: "CONTRAT.md : offres vides, floor du jour, ATH/ATL (interrupteurs)"
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          if [ "${CONTRAT_OFFRES_VIDES}${CONTRAT_FLOORS_JOUR}${CONTRAT_ATH_ATL}" = "000" ]; then
+            echo "Interrupteurs du contrat eteints : catalogue publie tel quel."; exit 0
+          fi
+          mkdir -p contrat_src
+          if [ "${CONTRAT_FLOORS_JOUR}${CONTRAT_ATH_ATL}" != "00" ]; then
+            # ⛔ sans historique des prix, pas de regle : le job s'arrete (rien publie).
+            gh release download prices-full -R Leonessa2/jetonveve -p prices.csv.gz -D contrat_src --clobber
+          fi
+          [ -f contrat_src/prices.csv.gz ] || printf 'veve_uuid,ts_utc,floor,listings\n' | gzip > contrat_src/prices.csv.gz
+          python -m scraper.contrat_appliquer catalogue.csv.gz contrat_src/prices.csv.gz contrat
+          cp contrat/catalogue.csv.gz catalogue.csv.gz
+          ls -lh catalogue.csv.gz contrat/
 
       - name: "Secours N-1 puis publication (Release catalogue, jetonveve)"
         env:
@@ -95,6 +120,24 @@ jobs:
           fi
           gh release upload catalogue -R $R catalogue.csv.gz --clobber
           echo "✅ Release catalogue mise a jour."
+          # 📈 CONTRAT.md 3.7 : le floor du jour, avec son secours N-1.
+          if [ "${CONTRAT_FLOORS_JOUR}" = "1" ]; then
+            if gh release view floors-jour -R $R >/dev/null 2>&1; then
+              mkdir -p prev_fj
+              gh release download floors-jour -R $R -D prev_fj --clobber || true
+              if [ -n "$(ls -A prev_fj 2>/dev/null)" ]; then
+                gh release view floors-jour-prev -R $R >/dev/null 2>&1 || \
+                  gh release create floors-jour-prev -R $R -t "Floor du jour — veille (secours N-1)" \
+                    -n "Copie automatique de floors-jour AVANT sa derniere mise a jour."
+                gh release upload floors-jour-prev -R $R prev_fj/* --clobber
+              fi
+            else
+              gh release create floors-jour -R $R -t "Floor du jour (CONTRAT.md 3.7)" \
+                -n "floors_jour.csv.gz : veve_uuid, date, floor, floor_suspect ; une ligne quand ca change. floors_jour.json : date de collecte."
+            fi
+            gh release upload floors-jour -R $R contrat/floors_jour.csv.gz contrat/floors_jour.json --clobber
+            echo "✅ Release floors-jour mise a jour."
+          fi
 
       # =====================================================================
       #  ⭐⭐ LE MAILLON LE PLUS SERRE DE LA CHAINE CRITIQUE
